@@ -25,18 +25,9 @@ fapi_url = "https://your-clerk-frontend-api.clerk.accounts.dev"
 
 For Clerk, use the OAuth/OIDC application credentials from Clerk Dashboard. The `client_secret` is the OAuth application client secret, not the Clerk `sk_test_...` or `sk_live_...` API secret.
 
-You can also configure Gemini through Streamlit secrets:
-
-```toml
-GEMINI_API_KEY = "your-gemini-api-key"
-GEMINI_MODEL = "gemini-3.5-flash"
-```
-
 Environment variables are also supported for local development:
 
 ```bash
-export GEMINI_API_KEY="your-gemini-api-key"
-export GEMINI_MODEL="gemini-3.5-flash"
 export ADMIN_PASSWORD="replace-with-a-strong-admin-password"
 export ADMIN_EMAIL="admin@example.com"
 export CLERK_CLIENT_ID="your-clerk-oauth-client-id"
@@ -44,8 +35,6 @@ export CLERK_CLIENT_SECRET="your-clerk-oauth-client-secret"
 export CLERK_REDIRECT_URI="http://localhost:8501"
 export CLERK_FAPI_URL="https://your-clerk-frontend-api.clerk.accounts.dev"
 ```
-
-If no Gemini key is configured, the dashboard still runs, but admins must add published quizzes before candidates can attempt a test.
 
 ## Run
 
@@ -59,7 +48,7 @@ Use `?view=admin` for admin login and `?view=public` for the public quiz portal.
 
 Set `ADMIN_PASSWORD` in `.streamlit/secrets.toml` for local development. For Streamlit Cloud, set the same key in **App settings → Secrets** and redeploy/reboot the app.
 
-Do not commit real passwords, Clerk secrets, or Gemini keys. Keep `.streamlit/secrets.toml` and `.env` local only.
+Do not commit real passwords or Clerk secrets. Keep `.streamlit/secrets.toml` and `.env` local only.
 
 ## Deploy To Streamlit Cloud
 
@@ -70,8 +59,6 @@ Do not commit real passwords, Clerk secrets, or Gemini keys. Keep `.streamlit/se
 ```toml
 ADMIN_PASSWORD = "replace-with-a-strong-admin-password"
 ADMIN_EMAIL = "admin@example.com"
-GEMINI_API_KEY = "your-gemini-api-key"
-GEMINI_MODEL = "gemini-3.5-flash"
 
 [clerk]
 client_id = "your-clerk-oauth-client-id"
@@ -87,15 +74,3 @@ https://your-streamlit-app.streamlit.app
 ```
 
 5. Deploy the app, then test sign-in and `?view=admin`.
-
-## Gemini Prompt Strategy
-
-The app sends Gemini a strict JSON prompt that requires Google Search grounding before item writing, limits questions to Medium and Hard difficulty, asks for long NEET PG-style clinical stems, and requires diagram/investigation-style questions through `visual_type` and `diagram_prompt` fields.
-
-A copy-ready standalone version is available in `GEMINI_PROMPT.md`.
-
-The admin selects one or more NEET PG subjects from the complete subject list, chooses the question count, and saves the generated quiz as either `draft` or `published`. Public candidates only see published quizzes.
-
-Admins generate questions from the `Quiz Creator` page by selecting subjects, choosing the question count, selecting draft/published status, and clicking `Generate with Gemini`.
-
-The prompt also asks Gemini to balance selected subjects, include plausible distractors, avoid obsolete low-yield trivia, and provide a memory tip for every generated item so missed questions can produce targeted revision anchors.
