@@ -1,0 +1,19 @@
+# Runtime data files — ephemeral on Streamlit Cloud; may contain quiz answers and user data
+quizzes.json
+quiz_attempts.json
+
+# Local secrets — configure these in Streamlit Cloud Secrets dashboard instead
+.env
+.streamlit/secrets.toml
+
+# Python environment
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+.Python
+
+# macOS
+.DS_Store

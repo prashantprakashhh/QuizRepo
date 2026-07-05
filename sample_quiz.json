@@ -1,0 +1,315 @@
+{
+  "title": "NEET PG \u2014 Pathology \u00b7 Pharmacology \u00b7 Microbiology",
+  "description": "30 high-quality NEET PG questions across Pathology (Q1\u201310), Pharmacology (Q11\u201320), and Microbiology (Q21\u201330) with memory tips and explanations.",
+  "subjects": ["Pathology", "Pharmacology", "Microbiology"],
+  "questions": [
+    {
+      "id": "demo-path-001", "specialty": "Pathology", "difficulty": "Medium",
+      "question": "A 58-year-old male presents with painless enlargement of his cervical and axillary lymph nodes. A lymph node biopsy reveals a nodular pattern of neoplastic follicles with closely packed, back-to-back arrangement. Flow cytometry shows CD19+, CD20+, CD10+, and Bcl-2+ B cells. Cytogenetic analysis reveals a t(14;18) translocation. Which of the following is the primary mechanism of oncogenesis in this patient?",
+      "options": ["Upregulation of Bcl-2, preventing apoptosis", "Upregulation of c-Myc, promoting cell proliferation", "Loss of p53, impairing DNA repair", "Activation of Cyclin D1, promoting G1/S transition"],
+      "answer": "Upregulation of Bcl-2, preventing apoptosis",
+      "rationale": "The t(14;18) translocation places BCL2 under the IGH promoter, overexpressing the anti-apoptotic Bcl-2 protein. This prevents apoptosis of follicular center B cells, causing follicular lymphoma. t(8;14) drives c-Myc in Burkitt lymphoma \u2014 a common trap.",
+      "memory_tip": "Follicular lymphoma is BCL-2 driven: 'Foll-fourteen' (14) and 'Eighteen' (18) equals BCL-2.",
+      "red_flags": ["t(14;18) translocation", "CD10+ Bcl-2+ B cells", "Nodular follicular pattern"],
+      "visual_type": "histology",
+      "diagram_prompt": "Lymph node biopsy H&E showing nodular follicular pattern with back-to-back neoplastic follicles. Flow cytometry panel showing CD19+, CD20+, CD10+, Bcl-2+ B cells."
+    },
+    {
+      "id": "demo-path-002", "specialty": "Pathology", "difficulty": "Medium",
+      "question": "A 34-year-old female presents with severe abdominal pain radiating to her back, fever, and hypotensive shock. Laboratory findings show marked elevation of serum amylase and lipase. A biopsy of the peripancreatic tissue obtained during emergency surgery reveals pale-white, chalky deposits. On microscopic examination, necrotic adipocytes are seen with shadowy outlines and bluish-purple deposits. What is the fundamental chemical reaction responsible for these microscopic findings?",
+      "options": ["Saponification of fatty acids with calcium", "Enzymatic degradation of proteins by trypsin", "Coagulation of structural proteins by acidosis", "Liquefaction of lipid membranes by free radicals"],
+      "answer": "Saponification of fatty acids with calcium",
+      "rationale": "Acute pancreatitis causes enzymatic fat necrosis. Released lipases liquefy adipocyte membranes, releasing fatty acids that combine with calcium to form insoluble chalky white soaps (saponification), appearing basophilic (bluish-purple) on H&E stain.",
+      "memory_tip": "Fat necrosis + Calcium = Saponification (soap formation, chalky white grossly).",
+      "red_flags": ["Elevated amylase/lipase", "Pale-white chalky deposits", "Bluish-purple on H&E"],
+      "visual_type": "none", "diagram_prompt": ""
+    },
+    {
+      "id": "demo-path-003", "specialty": "Pathology", "difficulty": "Medium",
+      "question": "A 45-year-old woman with a 15-year history of severe rheumatoid arthritis presents with progressive bilateral pedal edema and proteinuria of 4.2 g/day. A renal biopsy is performed. Under polarized light microscopy, a Congo Red-stained section of the glomerulus displays a characteristic apple-green birefringence. Which of the following proteins is most likely responsible for this deposition?",
+      "options": ["Amyloid light chain (AL)", "Amyloid-associated protein (AA)", "Beta-amyloid protein (A\u03b2)", "Transthyretin (ATTR)"],
+      "answer": "Amyloid-associated protein (AA)",
+      "rationale": "Chronic inflammatory conditions like rheumatoid arthritis lead to secondary (AA) amyloidosis. The liver produces serum amyloid-associated (SAA) protein as an acute-phase reactant, subsequently cleaved to form AA amyloid fibrils. AL amyloidosis is associated with plasma cell dyscrasias.",
+      "memory_tip": "AA amyloidosis is associated with Chronic Inflammation (e.g., Arthritis, Osteomyelitis, IBD).",
+      "red_flags": ["Chronic RA", "Apple-green birefringence on Congo Red", "Nephrotic-range proteinuria"],
+      "visual_type": "none", "diagram_prompt": ""
+    },
+    {
+      "id": "demo-path-004", "specialty": "Pathology", "difficulty": "Medium",
+      "question": "A 9-month-old infant is brought to the pediatrics clinic due to progressive developmental delay, loss of motor milestones, and an exaggerated startle response to loud sounds. Ophthalmoscopic examination reveals a prominent cherry-red spot in the macula bilaterally. There is no hepatosplenomegaly. Biopsy of tissues would show accumulation of which of the following substances?",
+      "options": ["Sphingomyelin", "Glucocerebroside", "GM2 ganglioside", "Galactocerebroside"],
+      "answer": "GM2 ganglioside",
+      "rationale": "Progressive neurodegeneration, cherry-red spot, and absent hepatosplenomegaly is diagnostic of Tay-Sachs disease, caused by Hexosaminidase A deficiency leading to GM2 ganglioside accumulation. Niemann-Pick disease presents similarly but with hepatosplenomegaly and sphingomyelin accumulation.",
+      "memory_tip": "Tay-SaCHs has No hepatosplenomegaly (unlike Niemann-Pick) and accumulates GM2 Ganglioside.",
+      "red_flags": ["Cherry-red spot", "No hepatosplenomegaly", "Startle response", "Hexosaminidase A deficiency"],
+      "visual_type": "none", "diagram_prompt": ""
+    },
+    {
+      "id": "demo-path-005", "specialty": "Pathology", "difficulty": "Hard",
+      "question": "A 42-year-old male presents with generalized swelling and dark-colored urine. Urinalysis reveals 3+ proteinuria and oval fat bodies. Renal biopsy immunofluorescence shows granular IgG and C3 deposits along the glomerular basement membrane, and electron microscopy reveals subepithelial spikes and domes. Which of the following antibodies is most commonly associated with the primary form of this disease?",
+      "options": ["Anti-phospholipase A2 receptor (PLA2R) antibody", "Anti-double stranded DNA (dsDNA) antibody", "Anti-glomerular basement membrane (GBM) antibody", "C3 nephritic factor"],
+      "answer": "Anti-phospholipase A2 receptor (PLA2R) antibody",
+      "rationale": "Granular IgG/C3 deposits with subepithelial spikes and domes on EM are classic for Membranous Nephropathy. Primary membranous nephropathy is strongly associated with anti-PLA2R antibodies on podocytes. Goodpasture syndrome shows linear deposits and anti-GBM antibodies.",
+      "memory_tip": "Membranous = PLA2R antibodies, subepithelial spikes and domes.",
+      "red_flags": ["Granular IgG + C3", "Subepithelial spikes/domes", "Oval fat bodies"],
+      "visual_type": "histology",
+      "diagram_prompt": "Electron micrograph of glomerular basement membrane showing characteristic subepithelial electron-dense deposits (domes) with intervening spikes of basement membrane material. Immunofluorescence showing granular IgG deposits."
+    },
+    {
+      "id": "demo-path-006", "specialty": "Pathology", "difficulty": "Hard",
+      "question": "A 48-year-old male presents with a painless thyroid nodule. Fine-needle aspiration biopsy reveals cells arranged in nests separated by an abundant amorphous stroma that stains positive with Congo red. Immunohistochemical analysis shows the tumor cells are positive for calcitonin and synaptophysin, but negative for thyroid transcription factor-1 (TTF-1). This tumor is associated with mutations in which of the following proto-oncogenes?",
+      "options": ["RET", "BRAF", "RAS", "PAX8-PPAR\u03b3"],
+      "answer": "RET",
+      "rationale": "Calcitonin positivity and Congo red-positive amyloid stroma (derived from procalcitonin) is pathognomonic for Medullary Thyroid Carcinoma (MTC). MTC arises from parafollicular C cells and is strongly associated with RET proto-oncogene mutations in both sporadic and MEN 2A/2B cases. BRAF is associated with papillary carcinoma.",
+      "memory_tip": "Medullary Thyroid Carcinoma = MEN 2 = RET proto-oncogene.",
+      "red_flags": ["Calcitonin positive", "Congo red positive amyloid stroma", "C-cell origin", "MEN 2"],
+      "visual_type": "none", "diagram_prompt": ""
+    },
+    {
+      "id": "demo-path-007", "specialty": "Pathology", "difficulty": "Hard",
+      "question": "A researcher studying cell death mechanisms observes a pathway where intracellular PAMPs trigger the assembly of a multi-protein complex containing NLRP3. This leads to the activation of Caspase-1, which subsequently cleaves Gasdermin D, causing cell swelling, membrane pore formation, and the release of IL-1\u03b2. Which of the following types of cell death is being described?",
+      "options": ["Apoptosis", "Necroptosis", "Pyroptosis", "Ferroptosis"],
+      "answer": "Pyroptosis",
+      "rationale": "Pyroptosis is an inflammatory form of programmed cell death triggered by the inflammasome (NLRP3) and executed by Caspase-1. It features cleavage of Gasdermin D to form membrane pores, releasing pro-inflammatory cytokines like IL-1\u03b2 and IL-18. Necroptosis is mediated by RIPK1/RIPK3/MLKL.",
+      "memory_tip": "Pyroptosis = 'Fire' (highly inflammatory) + Caspase-1 + Gasdermin D pores.",
+      "red_flags": ["NLRP3 inflammasome", "Caspase-1", "Gasdermin D", "IL-1\u03b2 release"],
+      "visual_type": "none", "diagram_prompt": ""
+    },
+    {
+      "id": "demo-path-008", "specialty": "Pathology", "difficulty": "Medium",
+      "question": "A 28-year-old female presents with bleeding gums, petechiae, and epistaxis. Laboratory evaluation reveals hemoglobin of 8.2 g/dL, platelet count of 24,000/\u03bcL, and WBC of 45,000/\u03bcL. Coagulation profile shows prolonged PT and APTT with low fibrinogen. A peripheral blood smear shows numerous myeloblasts with multiple needle-like crystalline cytoplasmic inclusions (Auer rods) in a single cell ('faggot cells'). Which of the following translocations is diagnostic of this condition?",
+      "options": ["t(9;22)", "t(15;17)", "t(8;21)", "t(11;17)"],
+      "answer": "t(15;17)",
+      "rationale": "'Faggot cells' (bundles of Auer rods) and DIC are characteristic of Acute Promyelocytic Leukemia (APL, AML-M3). It is driven by the t(15;17) translocation, fusing PML and RARA genes, making it highly responsive to All-Trans Retinoic Acid (ATRA). t(9;22) is seen in CML.",
+      "memory_tip": "APL M3 = t(15;17) = PML-RARA = Faggot cells + DIC.",
+      "red_flags": ["Faggot cells", "DIC pattern", "Myeloblasts", "Bleeding diathesis"],
+      "visual_type": "clinical_image",
+      "diagram_prompt": "Peripheral blood smear showing myeloblasts with multiple Auer rod bundles ('faggot cells') in a background of blast cells. Note multiple Auer rods in a single cell \u2014 pathognomonic for APL."
+    },
+    {
+      "id": "demo-path-009", "specialty": "Pathology", "difficulty": "Medium",
+      "question": "A 35-year-old female presents with dry cough, progressive dyspnea, and bilateral hilar lymphadenopathy on chest X-ray. A transbronchial lung biopsy reveals well-formed non-caseating granulomas. On high-power microscopic examination, some multinucleated giant cells contain stellate, star-shaped eosinophilic cytoplasmic inclusions. What are these characteristic inclusions?",
+      "options": ["Schaumann bodies", "Asteroid bodies", "Russell bodies", "Mallory-Denk bodies"],
+      "answer": "Asteroid bodies",
+      "rationale": "Non-caseating granulomas with bilateral hilar lymphadenopathy is classic for sarcoidosis. The star-shaped eosinophilic cytoplasmic inclusions in giant cells are Asteroid bodies, composed of compressed cytoskeletal filaments (microtubules). Schaumann bodies are laminated calcium-protein complexes, not star-shaped.",
+      "memory_tip": "Asteroid = Star-shaped = Sarcoidosis.",
+      "red_flags": ["Non-caseating granulomas", "Bilateral hilar lymphadenopathy", "Star-shaped inclusions in giant cells"],
+      "visual_type": "none", "diagram_prompt": ""
+    },
+    {
+      "id": "demo-path-010", "specialty": "Pathology", "difficulty": "Hard",
+      "question": "A 65-year-old male with a 40 pack-year smoking history presents with sudden onset of severe, tearing chest pain radiating to his back. His blood pressure is 180/100 mmHg in the right arm and 140/80 mmHg in the left arm. A chest CT angiogram confirms dissection of the ascending aorta. Which of the following pre-existing histopathological changes in the aortic media is most strongly associated with this condition?",
+      "options": ["Monckeberg medial calcific sclerosis", "Cystic medial degeneration", "Hyaline arteriolosclerosis", "Fibrinoid necrosis"],
+      "answer": "Cystic medial degeneration",
+      "rationale": "Aortic dissection is most commonly associated with cystic medial degeneration \u2014 loss of smooth muscle cells and elastic tissue with accumulation of amorphous extracellular matrix (basophilic ground substance). This is seen in Marfan syndrome and severe hypertension. Monckeberg sclerosis involves calcification of medium muscular arteries.",
+      "memory_tip": "Dissection of aorta = Cystic Medial Degeneration/Necrosis (fragmented elastic fibers, seen in Marfan and severe hypertension).",
+      "red_flags": ["Tearing chest pain", "Unequal BP between arms", "Ascending aorta"],
+      "visual_type": "none", "diagram_prompt": ""
+    },
+    {
+      "id": "demo-pharm-011", "specialty": "Pharmacology", "difficulty": "Medium",
+      "question": "A clinical trial is evaluating a newly synthesized anti-arrhythmic drug. The drug is administered as an intravenous bolus of 100 mg. Blood samples are drawn at regular intervals and the plasma concentration is plotted on a logarithmic scale against time. The extrapolation of the elimination phase to time zero yields a concentration of 2.5 mg/L. What is the apparent volume of distribution (Vd) of this drug?",
+      "options": ["4 L", "25 L", "40 L", "250 L"],
+      "answer": "40 L",
+      "rationale": "Vd = Dose / C0 = 100 mg \u00f7 2.5 mg/L = 40 L. A common error is inverting the formula or miscalculating the decimal. Vd of 40 L is intermediate, suggesting distribution into body tissues beyond plasma (normal plasma volume is ~3 L).",
+      "memory_tip": "Vd = Dose / C0. Think of it as: Volume = Amount / Concentration.",
+      "red_flags": ["IV bolus dose given", "C0 from log-linear extrapolation"],
+      "visual_type": "lab_table",
+      "diagram_prompt": "Pharmacokinetic curve: semi-log plot showing plasma concentration vs time. Dose = 100 mg. Extrapolated C0 = 2.5 mg/L. Calculate Vd = Dose/C0 = 100/2.5 = 40 L."
+    },
+    {
+      "id": "demo-pharm-012", "specialty": "Pharmacology", "difficulty": "Hard",
+      "question": "A 55-year-old male with type 2 diabetes mellitus, a BMI of 32 kg/m\u00b2, and chronic kidney disease (eGFR of 45 mL/min/1.73m\u00b2) presents for routine follow-up. He is currently on metformin 1000 mg twice daily. His HbA1c is 7.9%. The physician decides to add a drug that not only improves glycemic control but also provides significant cardiovascular and renal protection. Which of the following drug classes is the most appropriate next step?",
+      "options": ["SGLT2 inhibitors (e.g., Empagliflozin)", "Sulfonylureas (e.g., Glimepiride)", "GLP-1 receptor agonists (e.g., Liraglutide)", "Thiazolidinediones (e.g., Pioglitazone)"],
+      "answer": "SGLT2 inhibitors (e.g., Empagliflozin)",
+      "rationale": "Per current ADA guidelines, SGLT2 inhibitors are preferred in type 2 DM with CKD (eGFR 20\u201345) due to strong cardiorenal protective benefits independent of glycemic control. Sulfonylureas carry hypoglycemia risk without renal protection. GLP-1 agonists have cardiovascular benefits but less renal protection.",
+      "memory_tip": "SGLT2 inhibitors (e.g., Empagliflozin) are the 'gold standard' for renal and heart failure protection in diabetics.",
+      "red_flags": ["CKD with eGFR 45", "Cardiovascular risk", "Need for renal protection"],
+      "visual_type": "none", "diagram_prompt": ""
+    },
+    {
+      "id": "demo-pharm-013", "specialty": "Pharmacology", "difficulty": "Medium",
+      "question": "A 34-year-old female presents with severe, throbbing, unilateral headaches accompanied by nausea and photophobia, occurring 4-5 times a month. She has a history of stable angina and a family history of premature coronary artery disease. Which of the following medications is contraindicated for the acute treatment of her migraine attacks due to its potential to cause coronary vasospasm?",
+      "options": ["Lasmiditan", "Erenumab", "Sumatriptan", "Rimegepant"],
+      "answer": "Sumatriptan",
+      "rationale": "Sumatriptan (a 5-HT1B/1D receptor agonist) causes vasoconstriction of cranial vessels but can also produce coronary artery vasospasm. It is strictly contraindicated in CAD or angina. Lasmiditan is a 5-HT1F agonist with no vasoconstrictive effect; Erenumab is a CGRP monoclonal antibody.",
+      "memory_tip": "Triptans are contraindicated in CAD/Angina because they 'trip' (constrict) the coronary arteries.",
+      "red_flags": ["Stable angina history", "5-HT1B receptor activation", "Coronary vasospasm risk"],
+      "visual_type": "none", "diagram_prompt": ""
+    },
+    {
+      "id": "demo-pharm-014", "specialty": "Pharmacology", "difficulty": "Medium",
+      "question": "A 62-year-old African-American male with a history of gout and bilateral renal artery stenosis presents with a blood pressure of 162/95 mmHg. He has been taking an over-the-counter medication for joint pain. Which of the following antihypertensive agents is contraindicated in this patient because it can precipitate acute renal failure?",
+      "options": ["Amlodipine", "Chlorthalidone", "Lisinopril", "Metoprolol"],
+      "answer": "Lisinopril",
+      "rationale": "In bilateral renal artery stenosis, GFR depends on angiotensin II-mediated efferent arteriolar vasoconstriction. ACE inhibitors like Lisinopril block this compensatory mechanism, causing efferent vasodilation and a precipitous drop in GFR, leading to acute renal failure.",
+      "memory_tip": "ACE inhibitors / ARBs are strictly contraindicated in bilateral renal artery stenosis because they blow out the efferent tone.",
+      "red_flags": ["Bilateral renal artery stenosis", "ACE inhibitor use", "Efferent arteriolar tone"],
+      "visual_type": "none", "diagram_prompt": ""
+    },
+    {
+      "id": "demo-pharm-015", "specialty": "Pharmacology", "difficulty": "Hard",
+      "question": "A 45-year-old farmer is brought to the emergency department in an unresponsive state with extreme miosis, copious salivation, lacrimation, wheezing with bilateral rhonchi, muscle fasciculations, heart rate of 42 bpm, and blood pressure of 85/50 mmHg. The physician administers IV atropine. Which of the following clinical signs is the most reliable endpoint to guide the dosing of subsequent atropine boluses?",
+      "options": ["Resolution of miosis (mydriasis)", "Disappearance of muscle fasciculations", "Clearing of bronchoconstriction and tracheobronchial secretions", "Normalization of heart rate to >80 bpm"],
+      "answer": "Clearing of bronchoconstriction and tracheobronchial secretions",
+      "rationale": "In organophosphate poisoning, the primary cause of death is respiratory failure from bronchoconstriction and excessive secretions. 'Atropinization' is titrated to clearing of lung fields, not pupillary size or heart rate. Fasciculations are nicotinic effects and do not respond to atropine.",
+      "memory_tip": "Atropine endpoint in OP poisoning = Clear lungs (dry secretions), NOT mydriasis.",
+      "red_flags": ["SLUDGE features", "Muscarinic excess", "Life-threatening bronchoconstriction"],
+      "visual_type": "clinical_image",
+      "diagram_prompt": "Clinical presentation panel of organophosphate poisoning: pinpoint pupils (miosis), excessive secretions/lacrimation, bronchospasm on auscultation, bradycardia on ECG. Endpoint for atropinization = clear lung fields on auscultation."
+    },
+    {
+      "id": "demo-pharm-016", "specialty": "Pharmacology", "difficulty": "Hard",
+      "question": "A 28-year-old male with severe, refractory eosinophilic asthma is being evaluated for add-on biologic therapy. His absolute blood eosinophil count is 450 cells/\u03bcL. A monoclonal antibody targeting the interleukin-5 (IL-5) receptor alpha subunit is prescribed. Which of the following drugs is this?",
+      "options": ["Mepolizumab", "Reslizumab", "Benralizumab", "Dupilumab"],
+      "answer": "Benralizumab",
+      "rationale": "Benralizumab binds directly to the IL-5 receptor alpha subunit on eosinophils, inducing rapid eosinophil depletion via ADCC. Mepolizumab and Reslizumab bind to soluble IL-5 ligand directly, not its receptor. Dupilumab targets the IL-4 receptor alpha subunit.",
+      "memory_tip": "Benra-Receptor: Benralizumab binds the IL-5 Receptor (\u03b1 subunit); Mepo/Reslizumab bind IL-5 ligand directly.",
+      "red_flags": ["IL-5 receptor alpha target", "ADCC mechanism", "Eosinophil depletion"],
+      "visual_type": "none", "diagram_prompt": ""
+    },
+    {
+      "id": "demo-pharm-017", "specialty": "Pharmacology", "difficulty": "Medium",
+      "question": "A 45-year-old female with SLE and two late-term miscarriages is diagnosed with a complicated UTI and started on ciprofloxacin. Three days later, she presents with severe pain and swelling behind her left ankle worsening with walking. What is the molecular mechanism of the drug class responsible for this adverse effect?",
+      "options": ["Inhibition of DNA gyrase and Topoisomerase IV", "Inhibition of the 30S ribosomal subunit", "Disruption of cell wall peptidoglycan synthesis", "Inhibition of dihydropteroate synthase"],
+      "answer": "Inhibition of DNA gyrase and Topoisomerase IV",
+      "rationale": "Fluoroquinolones (like ciprofloxacin) are associated with tendinitis and tendon rupture, especially the Achilles tendon. Their molecular mechanism is inhibition of bacterial DNA gyrase (topoisomerase II) and topoisomerase IV, enzymes involved in DNA supercoiling and untangling.",
+      "memory_tip": "Fluoroquinolones 'hurt your bones' and 'tear your tendons' by stopping DNA gyrase.",
+      "red_flags": ["Achilles tendon pain", "Fluoroquinolone use", "Tendon rupture risk"],
+      "visual_type": "none", "diagram_prompt": ""
+    },
+    {
+      "id": "demo-pharm-018", "specialty": "Pharmacology", "difficulty": "Medium",
+      "question": "A 52-year-old male on warfarin (target INR 2.5\u20133.5) for mechanical mitral valve replacement is diagnosed with pulmonary tuberculosis and started on HRZE. Two weeks later, his INR drops to 1.2. Which of the following drugs in his anti-tubercular regimen is responsible for this drop by inducing hepatic CYP450 enzymes?",
+      "options": ["Isoniazid", "Rifampin", "Pyrazinamide", "Ethambutol"],
+      "answer": "Rifampin",
+      "rationale": "Rifampin is a potent inducer of hepatic CYP2C9 and CYP3A4, which metabolize warfarin. This leads to increased warfarin clearance and a significant INR drop, putting the patient at risk of thrombosis. Isoniazid is actually a CYP inhibitor, which would increase INR.",
+      "memory_tip": "Rifampin 'Ramps up' CYP enzymes (inducer), while Isoniazid 'Inhibits' them.",
+      "red_flags": ["INR drop on warfarin", "CYP450 inducer", "Orange-red secretions"],
+      "visual_type": "none", "diagram_prompt": ""
+    },
+    {
+      "id": "demo-pharm-019", "specialty": "Pharmacology", "difficulty": "Hard",
+      "question": "A 64-year-old male with metastatic colorectal cancer treated with 5-Fluorouracil (5-FU) develops severe, life-threatening neutropenia, diarrhea, and neurotoxicity during the second cycle. Genetic testing reveals a homozygous deficiency in a key catabolic enzyme responsible for degrading over 80% of administered 5-FU. Which enzyme is deficient in this patient?",
+      "options": ["Thymidylate synthase (TS)", "Dihydropyrimidine dehydrogenase (DPD)", "Uridine phosphorylase (UP)", "Hypoxanthine-guanine phosphoribosyltransferase (HGPRT)"],
+      "answer": "Dihydropyrimidine dehydrogenase (DPD)",
+      "rationale": "DPD is the rate-limiting enzyme in 5-FU catabolism. Patients with DPD deficiency cannot clear 5-FU, leading to severe, life-threatening toxicity including myelosuppression, mucosal damage, and neurotoxicity. TS is the target of 5-FU, not its catabolic enzyme.",
+      "memory_tip": "DPD Deficiency = 5-FU Disaster (severe toxicity).",
+      "red_flags": ["5-FU toxicity", "Genetic testing", "Catabolic enzyme deficiency"],
+      "visual_type": "none", "diagram_prompt": ""
+    },
+    {
+      "id": "demo-pharm-020", "specialty": "Pharmacology", "difficulty": "Hard",
+      "question": "A 68-year-old male with Parkinson's disease on levodopa/carbidopa for 5 years reports wearing-off and involuntary writhing movements 1 hour after each dose. Which of the following drugs can be added to specifically inhibit both the peripheral and central degradation of levodopa by catechol-O-methyltransferase (COMT)?",
+      "options": ["Entacapone", "Tolcapone", "Selegiline", "Rasagiline"],
+      "answer": "Tolcapone",
+      "rationale": "Tolcapone inhibits COMT both peripherally and centrally, while Entacapone acts only peripherally. Selegiline and Rasagiline are MAO-B inhibitors, not COMT inhibitors. Tolcapone requires liver function monitoring due to risk of acute hepatic failure.",
+      "memory_tip": "Tolcapone acts 'Total' (Central + Peripheral), Entacapone acts 'Entero' (Peripheral/enteric only).",
+      "red_flags": ["COMT inhibition", "Central + peripheral action", "Hepatotoxicity risk"],
+      "visual_type": "none", "diagram_prompt": ""
+    },
+    {
+      "id": "demo-micro-021", "specialty": "Microbiology", "difficulty": "Medium",
+      "question": "A 24-year-old resident doctor pricks his finger with a needle used on a patient with MRSA bacteremia. Two days later, he develops a painful, fluctuant purulent nodule at the site. Culture yields Gram-positive cocci in clusters. Which of the following bacterial surface components is responsible for preventing opsonization and phagocytosis by binding to the Fc portion of IgG antibodies?",
+      "options": ["M protein", "Protein A", "Teichoic acid", "Lipopolysaccharide"],
+      "answer": "Protein A",
+      "rationale": "S. aureus produces Protein A, which binds to the Fc portion of IgG, preventing proper opsonization and subsequent phagocytosis by neutrophils. M protein is the major virulence factor of Streptococcus pyogenes, not S. aureus.",
+      "memory_tip": "Protein A binds the Fc region of IgG, turning the antibody 'upside down' to prevent phagocytosis.",
+      "red_flags": ["MRSA", "Gram-positive cocci clusters", "Fc portion of IgG binding"],
+      "visual_type": "none", "diagram_prompt": ""
+    },
+    {
+      "id": "demo-micro-022", "specialty": "Microbiology", "difficulty": "Hard",
+      "question": "A 48-year-old farmer from Andhra Pradesh presents with a painless, necrotic cutaneous ulcer on his forearm surrounded by a ring of non-pitting edema. Gram staining reveals large, square-ended Gram-positive bacilli in chains. Polychrome methylene blue stain shows capsulated bacilli with a positive McFadyean reaction. Which of the following is the primary virulence factor responsible for the edema seen in this patient?",
+      "options": ["A toxin that cleaves mitogen-activated protein kinase kinase (MAPKK)", "An adenylate cyclase that increases intracellular cAMP", "A metalloprotease that degrades gelatin and collagen", "A lecithinase that disrupts eukaryotic cell membranes"],
+      "answer": "An adenylate cyclase that increases intracellular cAMP",
+      "rationale": "This is cutaneous anthrax (Bacillus anthracis, confirmed by McFadyean reaction). The edema is caused by Edema Factor (EF), a calmodulin-dependent adenylate cyclase that increases cAMP, leading to fluid transudation. Lethal Factor (LF) is the zinc-metalloprotease that cleaves MAPKK.",
+      "memory_tip": "Edema Factor = Adenylate Cyclase (increases cAMP); Lethal Factor = Cleaves MAPKK (causes necrosis).",
+      "red_flags": ["McFadyean reaction", "Square-ended bacilli", "Non-pitting edema", "Cutaneous anthrax"],
+      "visual_type": "clinical_image",
+      "diagram_prompt": "Cutaneous anthrax ulcer on forearm: painless black eschar (malignant pustule) surrounded by non-pitting edema. Gram stain showing large square-ended Gram-positive bacilli in chains. McFadyean stain (polychrome methylene blue) showing capsulated bacilli."
+    },
+    {
+      "id": "demo-micro-023", "specialty": "Microbiology", "difficulty": "Medium",
+      "question": "A 22-year-old veterinary student presents with acute abdominal pain, high fever, and bloody diarrhea. Stool culture on selective media at 42\u00b0C under microaerophilic conditions grows comma-shaped, Gram-negative motile rods with a 'gull-wing' appearance. Which of the following complications is most closely associated with this infection due to molecular mimicry?",
+      "options": ["Hemolytic Uremic Syndrome", "Guillain-Barr\u00e9 Syndrome", "Reactive Arthritis", "Pseudomembranous Colitis"],
+      "answer": "Guillain-Barr\u00e9 Syndrome",
+      "rationale": "The culture conditions and morphology identify Campylobacter jejuni. Molecular mimicry between C. jejuni lipooligosaccharides (LOS) and human gangliosides (GM1) in peripheral nerves triggers GBS. HUS is associated with enterohemorrhagic E. coli (EHEC), not Campylobacter.",
+      "memory_tip": "Campylobacter jejuni is the most common antecedent infection for Guillain-Barr\u00e9 Syndrome (GBS).",
+      "red_flags": ["42\u00b0C growth", "Microaerophilic", "Gull-wing morphology", "Post-infectious neuropathy"],
+      "visual_type": "none", "diagram_prompt": ""
+    },
+    {
+      "id": "demo-micro-024", "specialty": "Microbiology", "difficulty": "Medium",
+      "question": "A 32-year-old HIV-positive male presents with painful, clustered vesicular lesions on an erythematous base around his mouth. Tzanck smear of the vesicle fluid reveals multinucleated giant cells with ground-glass nuclei and Cowdry A intranuclear inclusions. Which of the following enzymes is encoded by the causative virus and is the primary target of the first-line antiviral drug used to treat this condition?",
+      "options": ["Reverse transcriptase", "Thymidine kinase", "DNA-dependent RNA polymerase", "Integrase"],
+      "answer": "Thymidine kinase",
+      "rationale": "The patient has HSV infection (Cowdry A inclusions, multinucleated giant cells). Acyclovir must be monophosphorylated by the viral enzyme thymidine kinase to become active. Host cell enzymes then convert it to the triphosphate form, inhibiting viral DNA polymerase.",
+      "memory_tip": "Acyclovir needs viral Thymidine Kinase to 'kick-start' its activation.",
+      "red_flags": ["Cowdry A inclusions", "Multinucleated giant cells", "HSV", "Acyclovir prodrug mechanism"],
+      "visual_type": "none", "diagram_prompt": ""
+    },
+    {
+      "id": "demo-micro-025", "specialty": "Microbiology", "difficulty": "Medium",
+      "question": "A 6-year-old child is brought to clinic due to intense perianal itching, especially at night. The physician performs a cellophane tape test in the morning. Microscopic examination of the tape reveals asymmetric, plano-convex eggs with a double-contoured shell containing a fully formed larva. What is the most likely causative parasite?",
+      "options": ["Ascaris lumbricoides", "Enterobius vermicularis", "Ancylostoma duodenale", "Trichuris trichiura"],
+      "answer": "Enterobius vermicularis",
+      "rationale": "Nocturnal perianal pruritus and the characteristic D-shaped (plano-convex) egg on a Scotch tape test are diagnostic of Enterobius vermicularis (pinworm). Ascaris eggs are round with a rough mamillated albuminous coat.",
+      "memory_tip": "Enterobius vermicularis = D-shaped eggs, Scotch tape test, nocturnal perianal itching.",
+      "red_flags": ["Nocturnal perianal itching", "Plano-convex D-shaped eggs", "Cellophane tape test"],
+      "visual_type": "clinical_image",
+      "diagram_prompt": "Microscopy of cellophane tape preparation showing characteristic Enterobius vermicularis eggs: asymmetric, plano-convex (D-shaped), double-contoured shell, containing a fully formed coiled larva. Compare with Ascaris (round, mammillated coat)."
+    },
+    {
+      "id": "demo-micro-026", "specialty": "Microbiology", "difficulty": "Hard",
+      "question": "A 42-year-old male cave explorer from the Ohio River Valley presents with fever, dry cough, and chest pain. A chest X-ray shows diffuse pulmonary infiltrates and hilar lymphadenopathy. A tissue biopsy of the lung shows small (2-4 \u03bcm), oval, intracellular budding yeast cells inside macrophages. Which of the following fungal pathogens is the most likely cause of this presentation?",
+      "options": ["Cryptococcus neoformans", "Histoplasma capsulatum", "Blastomyces dermatitidis", "Coccidioides immitis"],
+      "answer": "Histoplasma capsulatum",
+      "rationale": "H. capsulatum is a dimorphic fungus endemic to the Ohio/Mississippi River valleys, associated with bat guano in caves. Inside the body, it exists as small intracellular yeasts within macrophages. Cryptococcus is extracellular with a capsule; Blastomyces is larger with broad-based budding.",
+      "memory_tip": "Histoplasma Hides inside macrophages (Histo = Hides).",
+      "red_flags": ["Ohio River Valley", "Bat/bird droppings", "Intracellular yeast in macrophages"],
+      "visual_type": "none", "diagram_prompt": ""
+    },
+    {
+      "id": "demo-micro-027", "specialty": "Microbiology", "difficulty": "Hard",
+      "question": "A 15-year-old male presents with recurrent episodes of meningitis (third episode in four years) with Neisseria meningitidis. He has a normal count of T and B cells and normal immunoglobulin levels. A deficiency in which of the following complement components is most likely responsible for his susceptibility to these infections?",
+      "options": ["C1q, C1r, or C1s", "C3", "C5-C9 (Membrane Attack Complex)", "C1 inhibitor"],
+      "answer": "C5-C9 (Membrane Attack Complex)",
+      "rationale": "Deficiencies in the late complement components (C5-C9), forming the Membrane Attack Complex (MAC), prevent lysis of thin-walled bacteria like Neisseria. These patients have recurrent severe Neisseria infections. C3 deficiency leads to severe recurrent pyogenic infections with encapsulated organisms.",
+      "memory_tip": "Neisseria infections recur when you lack the MAC (C5-C9).",
+      "red_flags": ["Recurrent Neisseria meningitidis", "Normal T/B cells and Ig", "MAC deficiency"],
+      "visual_type": "none", "diagram_prompt": ""
+    },
+    {
+      "id": "demo-micro-028", "specialty": "Microbiology", "difficulty": "Medium",
+      "question": "A 28-year-old pregnant female at 32 weeks of gestation is evaluated for acute onset of jaundice, dark urine, and severe fatigue with markedly elevated AST/ALT. Serological testing for Hepatitis A, B, and C is negative. She rapidly deteriorates with hepatic encephalopathy and coagulopathy, and passes away. This high mortality rate in pregnant females is characteristic of which of the following viral agents?",
+      "options": ["Hepatitis D Virus", "Hepatitis E Virus", "Hepatitis G Virus", "Torque Teno Virus"],
+      "answer": "Hepatitis E Virus",
+      "rationale": "Hepatitis E Virus (HEV), a non-enveloped ssRNA virus transmitted via fecal-oral route, causes fulminant hepatic failure with high mortality (up to 20%) in pregnant women, particularly during the third trimester. Other hepatitis viruses do not show this selective pregnancy mortality.",
+      "memory_tip": "Hepatitis E is 'Enteric' (fecal-oral) and 'Expectant' (high mortality in pregnant women).",
+      "red_flags": ["Third trimester pregnancy", "Fecal-oral transmission", "Fulminant hepatic failure"],
+      "visual_type": "none", "diagram_prompt": ""
+    },
+    {
+      "id": "demo-micro-029", "specialty": "Microbiology", "difficulty": "Hard",
+      "question": "A 65-year-old male with 40% body surface area burns is hospitalized in the ICU. On day 5, he develops high fever and burn wounds discharging sweet-smelling, greenish-blue pus. Blood cultures grow Gram-negative, oxidase-positive rods that produce a pyocyanin pigment. Which of the following is the primary mechanism of action of the main exotoxin produced by this organism?",
+      "options": ["ADP-ribose transfer to Elongation Factor-2 (EF-2)", "Cleavage of ribosomal RNA at the 60S subunit", "Inhibition of neurotransmitter release from synaptic vesicles", "Superantigen binding to MHC class II and TCR"],
+      "answer": "ADP-ribose transfer to Elongation Factor-2 (EF-2)",
+      "rationale": "The pathogen is Pseudomonas aeruginosa (greenish-blue pyocyanin, sweet grape-like odor, common in burn infections). Exotoxin A ADP-ribosylates Elongation Factor-2 (EF-2), halting host cell protein synthesis \u2014 the same mechanism as diphtheria toxin.",
+      "memory_tip": "Pseudomonas Exotoxin A and Diphtheria toxin both 'Add ADP' to EF-2 to stop protein synthesis.",
+      "red_flags": ["Burn wound infection", "Pyocyanin (blue-green)", "Sweet grape-like odor", "Oxidase-positive"],
+      "visual_type": "clinical_image",
+      "diagram_prompt": "Burn wound with greenish-blue pus discharge (pyocyanin pigment). Gram stain showing Gram-negative rods. Mechanism diagram: Exotoxin A \u2192 ADP-ribosylation of EF-2 \u2192 halts protein synthesis (same as diphtheria toxin)."
+    },
+    {
+      "id": "demo-micro-030", "specialty": "Microbiology", "difficulty": "Hard",
+      "question": "A 35-year-old male returns to Delhi after a trip to northeastern India presenting with high-grade, spiking fevers every 48 hours with severe chills, rigors, and confusion. A peripheral blood smear shows multiple delicate ring-form trophozoites within normal-sized RBCs, some with double chromatin dots, and characteristic crescent-shaped (banana-shaped) gametocytes. Which of the following is the drug of choice for clearing the dormant liver stages (hypnozoites) in patients infected with the species that causes this specific presentation?",
+      "options": ["Chloroquine", "Primaquine", "Artesunate", "No treatment is needed as this species does not form hypnozoites"],
+      "answer": "No treatment is needed as this species does not form hypnozoites",
+      "rationale": "Crescent-shaped gametocytes and multiple ring forms are diagnostic of Plasmodium falciparum. Unlike P. vivax and P. ovale, P. falciparum does not form hypnozoites (dormant liver stages). Primaquine is given in falciparum only as a single dose to kill gametocytes (transmission blocking), not for hypnozoites.",
+      "memory_tip": "Only Vivax and Ovale have hypnOzoites (dormant liver stages) requiring Primaquine for relapse prevention. Falciparum does not!",
+      "red_flags": ["Crescent/banana gametocytes", "Multiple ring forms", "Normal-sized RBCs", "P. falciparum"],
+      "visual_type": "none", "diagram_prompt": ""
+    }
+  ]
+}
