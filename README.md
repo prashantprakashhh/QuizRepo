@@ -15,6 +15,7 @@ Configure admin and Clerk credentials through Streamlit secrets. For local devel
 ```toml
 ADMIN_PASSWORD = "replace-with-a-strong-admin-password"
 ADMIN_EMAIL = "admin@example.com"
+DATABASE_URL = "postgresql://user:password@host:5432/database"
 
 [clerk]
 client_id = "your-clerk-oauth-client-id"
@@ -30,6 +31,7 @@ Environment variables are also supported for local development:
 ```bash
 export ADMIN_PASSWORD="replace-with-a-strong-admin-password"
 export ADMIN_EMAIL="admin@example.com"
+export DATABASE_URL="postgresql://user:password@host:5432/database"
 export CLERK_CLIENT_ID="your-clerk-oauth-client-id"
 export CLERK_CLIENT_SECRET="your-clerk-oauth-client-secret"
 export CLERK_REDIRECT_URI="http://localhost:8501"
@@ -43,6 +45,23 @@ streamlit run app.py
 ```
 
 Use `?view=admin` for admin login and `?view=public` for the public quiz portal.
+
+## Database Storage
+
+Set `DATABASE_URL` to a PostgreSQL connection string to store student attempts/progress and post-quiz feedback in a database. If `DATABASE_URL` is not configured, the app falls back to local JSON files for development.
+
+On Render, create a PostgreSQL database, copy its **Internal Database URL**, and add it to the web service environment variables as:
+
+```text
+DATABASE_URL=postgresql://...
+```
+
+The app creates these tables automatically on first use:
+
+```text
+quiz_attempts
+quiz_feedback
+```
 
 ## Change Admin Password
 
@@ -59,6 +78,7 @@ Do not commit real passwords or Clerk secrets. Keep `.streamlit/secrets.toml` an
 ```toml
 ADMIN_PASSWORD = "replace-with-a-strong-admin-password"
 ADMIN_EMAIL = "admin@example.com"
+DATABASE_URL = "postgresql://user:password@host:5432/database"
 
 [clerk]
 client_id = "your-clerk-oauth-client-id"

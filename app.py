@@ -22,6 +22,7 @@ HISTORY_QUERY_TOKEN = "history"
 ATTEMPTS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "quiz_attempts.json")
 QUIZZES_FILE  = os.path.join(os.path.dirname(os.path.abspath(__file__)), "quizzes.json")
 USER_DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "user_data.json")
+FEEDBACK_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "quiz_feedback.json")
 _LOCAL_ENV_CACHE: Optional[dict[str, str]] = None
 NEET_SUBJECTS = [
     "Anatomy",
@@ -382,6 +383,197 @@ def inject_css() -> None:
             color: var(--muted);
             line-height: 1.5;
             margin: 0;
+        }
+
+        .app-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 0.2rem 0.1rem;
+        }
+
+        .app-brand {
+            color: rgba(248,240,240,0.92);
+            font-weight: 900;
+            letter-spacing: 0.13em;
+            text-transform: uppercase;
+            font-size: 0.78rem;
+        }
+
+        .app-nav-link {
+            color: rgba(248,240,240,0.58);
+            font-size: 0.78rem;
+            text-decoration: none;
+            border: 1px solid rgba(220,20,60,0.22);
+            padding: 0.34rem 0.8rem;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.035);
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+        }
+
+        .user-hero {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(220,20,60,0.22);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1rem;
+            background:
+                linear-gradient(115deg, rgba(20,2,10,0.96), rgba(6,0,4,0.94) 54%, rgba(76,7,23,0.62)),
+                radial-gradient(circle at 84% 18%, rgba(255,107,107,0.18), transparent 18rem);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.055), 0 28px 70px rgba(0,0,0,0.30);
+        }
+
+        .user-hero::after {
+            content: "";
+            position: absolute;
+            right: -7rem;
+            top: -9rem;
+            width: 26rem;
+            height: 26rem;
+            border-radius: 50%;
+            border: 1px solid rgba(220,20,60,0.25);
+            background: conic-gradient(from 30deg, rgba(220,20,60,0.02), rgba(220,20,60,0.18), rgba(220,20,60,0.02));
+            pointer-events: none;
+        }
+
+        .user-hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 760px;
+        }
+
+        .user-hero h1 {
+            font-size: clamp(2rem, 5vw, 4.2rem);
+            line-height: 0.98;
+            margin: 0.25rem 0 0.55rem;
+        }
+
+        .user-hero p {
+            color: var(--muted);
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .section-kicker {
+            color: var(--primary);
+            font-size: 0.72rem;
+            font-weight: 850;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            margin: 1.25rem 0 0.3rem;
+        }
+
+        .section-title {
+            margin: 0 0 0.7rem;
+            font-size: 1.22rem;
+            letter-spacing: 0;
+        }
+
+        .insight-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.025));
+            border: 1px solid rgba(220,20,60,0.18);
+            border-radius: 10px;
+            padding: 1rem;
+            min-height: 100%;
+        }
+
+        .insight-card strong {
+            display: block;
+            margin-bottom: 0.65rem;
+            color: var(--ink);
+            font-size: 0.98rem;
+        }
+
+        .progress-row {
+            display: grid;
+            grid-template-columns: minmax(110px, 170px) 1fr minmax(44px, auto);
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.42rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.055);
+            font-size: 0.86rem;
+        }
+
+        .progress-track {
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.08);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: inherit;
+        }
+
+        .recent-row {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.52rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.055);
+            font-size: 0.86rem;
+        }
+
+        .portal-hero {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            gap: 1rem;
+            padding: 1.35rem 1.4rem;
+            border: 1px solid rgba(220,20,60,0.18);
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(20,2,10,0.92), rgba(6,0,4,0.88));
+            margin-bottom: 1rem;
+        }
+
+        .portal-hero h1 {
+            margin: 0.18rem 0 0.35rem;
+            font-size: clamp(1.7rem, 4vw, 3rem);
+        }
+
+        .portal-hero p { margin: 0; color: var(--muted); }
+
+        .quiz-card {
+            transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+        }
+
+        .quiz-card:hover {
+            border-color: rgba(220,20,60,0.38);
+            transform: translateY(-2px);
+            box-shadow: 0 18px 45px rgba(0,0,0,0.22);
+        }
+
+        .quiz-card h3 {
+            margin: 0 0 0.4rem;
+            font-size: 1.12rem;
+        }
+
+        .quiz-card .muted { margin-bottom: 0.2rem; }
+
+        .quiz-topline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.9rem;
+            margin-bottom: 0.7rem;
+            padding: 0.7rem 0.9rem;
+            border: 1px solid rgba(220,20,60,0.16);
+            border-radius: 9px;
+            background: rgba(255,255,255,0.035);
+        }
+
+        .feedback-panel {
+            border: 1px solid rgba(220,20,60,0.20);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.052), rgba(255,255,255,0.025));
         }
 
         @keyframes floatDrift {
@@ -791,6 +983,8 @@ def reset_attempt() -> None:
     st.session_state.responses = []
     st.session_state.incorrect = []
     st.session_state["result_saved"] = False
+    st.session_state["attempt_id"] = None
+    st.session_state["feedback_submitted"] = False
 
 
 def start_registration(quiz_id: str) -> None:
@@ -835,8 +1029,137 @@ def validate_question(raw: dict[str, Any], index: int) -> dict[str, Any]:
     }
 
 
+def _database_url() -> str:
+    return get_secret("DATABASE_URL", "")
+
+
+def _db_connect():
+    import psycopg
+    return psycopg.connect(_database_url())
+
+
+def _db_available() -> bool:
+    return bool(_database_url())
+
+
+def _ensure_db_schema() -> None:
+    if not _db_available():
+        return
+    with _db_connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS quiz_attempts (
+                    id BIGSERIAL PRIMARY KEY,
+                    quiz_id TEXT NOT NULL,
+                    quiz_title TEXT NOT NULL,
+                    candidate TEXT NOT NULL,
+                    email TEXT NOT NULL,
+                    score INTEGER NOT NULL,
+                    max_score INTEGER NOT NULL,
+                    accuracy DOUBLE PRECISION NOT NULL,
+                    correct INTEGER NOT NULL,
+                    incorrect INTEGER NOT NULL,
+                    total INTEGER NOT NULL,
+                    subject_accuracy JSONB NOT NULL DEFAULT '{}'::jsonb,
+                    completed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    payload JSONB NOT NULL
+                )
+                """
+            )
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS quiz_feedback (
+                    id BIGSERIAL PRIMARY KEY,
+                    attempt_id BIGINT REFERENCES quiz_attempts(id) ON DELETE SET NULL,
+                    quiz_id TEXT NOT NULL,
+                    quiz_title TEXT NOT NULL,
+                    candidate TEXT NOT NULL,
+                    email TEXT NOT NULL,
+                    rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+                    comments TEXT NOT NULL DEFAULT '',
+                    next_quiz TEXT NOT NULL DEFAULT '',
+                    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+                """
+            )
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_quiz_attempts_email ON quiz_attempts (LOWER(email))")
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_quiz_feedback_email ON quiz_feedback (LOWER(email))")
+
+
+def _load_attempts_from_db() -> list:
+    from psycopg.rows import dict_row
+
+    _ensure_db_schema()
+    with _db_connect() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute("SELECT payload, id FROM quiz_attempts ORDER BY completed_at DESC, id DESC")
+            attempts = []
+            for row in cur.fetchall():
+                payload = dict(row["payload"])
+                payload.setdefault("id", row["id"])
+                attempts.append(payload)
+            return attempts
+
+
+def _save_attempt_to_db(attempt: dict) -> Optional[int]:
+    from psycopg.types.json import Jsonb
+
+    _ensure_db_schema()
+    with _db_connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO quiz_attempts (
+                    quiz_id, quiz_title, candidate, email, score, max_score, accuracy,
+                    correct, incorrect, total, subject_accuracy, completed_at, payload
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                RETURNING id
+                """,
+                (
+                    attempt.get("quiz_id", ""),
+                    attempt.get("quiz_title", "Quiz"),
+                    attempt.get("candidate", ""),
+                    attempt.get("email", ""),
+                    int(attempt.get("score", 0)),
+                    int(attempt.get("max_score", 0)),
+                    float(attempt.get("accuracy", 0)),
+                    int(attempt.get("correct", 0)),
+                    int(attempt.get("incorrect", 0)),
+                    int(attempt.get("total", 0)),
+                    Jsonb(attempt.get("subject_accuracy", {})),
+                    attempt.get("completed_at") or datetime.now().isoformat(timespec="seconds"),
+                    Jsonb(attempt),
+                ),
+            )
+            row = cur.fetchone()
+            return int(row[0]) if row else None
+
+
+def _load_feedback_from_db() -> list:
+    from psycopg.rows import dict_row
+
+    _ensure_db_schema()
+    with _db_connect() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute(
+                """
+                SELECT attempt_id, quiz_id, quiz_title, candidate, email,
+                       rating, comments, next_quiz, created_at
+                FROM quiz_feedback
+                ORDER BY created_at DESC, id DESC
+                """
+            )
+            return [dict(row) for row in cur.fetchall()]
+
+
 def load_attempts() -> list:
-    """Load all quiz attempt records from the local persistence file."""
+    """Load all quiz attempt records from the configured database or local fallback file."""
+    if _db_available():
+        try:
+            return _load_attempts_from_db()
+        except Exception as exc:
+            st.warning(f"Database read failed; using local fallback. {exc}")
     try:
         if os.path.exists(ATTEMPTS_FILE):
             with open(ATTEMPTS_FILE, "r") as f:
@@ -846,15 +1169,80 @@ def load_attempts() -> list:
     return []
 
 
-def save_attempt(attempt: dict) -> None:
-    """Append a quiz attempt record to the local persistence file."""
+def save_attempt(attempt: dict) -> Optional[int]:
+    """Append a quiz attempt record to the configured database or local fallback file."""
+    if _db_available():
+        try:
+            return _save_attempt_to_db(attempt)
+        except Exception as exc:
+            st.warning(f"Database write failed; using local fallback. {exc}")
     try:
         records = load_attempts()
         records.append(attempt)
         with open(ATTEMPTS_FILE, "w") as f:
             json.dump(records, f, indent=2)
+        return len(records)
+    except Exception:
+        return None
+
+
+def save_feedback(feedback: dict) -> bool:
+    """Persist quiz feedback to the database, or to a local fallback JSON file."""
+    if _db_available():
+        try:
+            _ensure_db_schema()
+            with _db_connect() as conn:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        """
+                        INSERT INTO quiz_feedback (
+                            attempt_id, quiz_id, quiz_title, candidate, email,
+                            rating, comments, next_quiz, created_at
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        """,
+                        (
+                            feedback.get("attempt_id"),
+                            feedback.get("quiz_id", ""),
+                            feedback.get("quiz_title", "Quiz"),
+                            feedback.get("candidate", ""),
+                            feedback.get("email", ""),
+                            int(feedback.get("rating", 0)),
+                            feedback.get("comments", ""),
+                            feedback.get("next_quiz", ""),
+                            feedback.get("created_at") or datetime.now().isoformat(timespec="seconds"),
+                        ),
+                    )
+            return True
+        except Exception as exc:
+            st.warning(f"Database feedback write failed; using local fallback. {exc}")
+
+    try:
+        records = []
+        if os.path.exists(FEEDBACK_FILE):
+            with open(FEEDBACK_FILE, "r") as f:
+                records = json.load(f)
+        records.append(feedback)
+        with open(FEEDBACK_FILE, "w") as f:
+            json.dump(records, f, indent=2)
+        return True
+    except Exception:
+        return False
+
+
+def load_feedback() -> list:
+    """Load quiz feedback from the configured database or local fallback file."""
+    if _db_available():
+        try:
+            return _load_feedback_from_db()
+        except Exception as exc:
+            st.warning(f"Database feedback read failed; using local fallback. {exc}")
+    try:
+        if os.path.exists(FEEDBACK_FILE):
+            with open(FEEDBACK_FILE, "r") as f:
+                return json.load(f)
     except Exception:
         pass
+    return []
 
 
 def load_quizzes() -> list:
@@ -1660,15 +2048,9 @@ def render_landing() -> None:
     )
     st.markdown(
         f"""
-        <div style="display:flex;justify-content:space-between;align-items:center;
-                    margin-bottom:0.7rem;padding:0 0.1rem">
-            <span style="color:rgba(220,20,60,0.9);font-weight:800;letter-spacing:0.1em;
-                         font-size:0.78rem;text-transform:uppercase">QuizRepo</span>
-            <a href="{admin_href}" target="_self"
-               style="color:rgba(248,240,240,0.5);font-size:0.78rem;text-decoration:none;
-                      border:1px solid rgba(220,20,60,0.2);padding:0.28rem 0.75rem;
-                      border-radius:5px;background:rgba(255,255,255,0.03);letter-spacing:0.04em;
-                      white-space:nowrap">Admin &rarr;</a>
+        <div class="app-topbar">
+            <span class="app-brand">QuizRepo</span>
+            <a href="{admin_href}" target="_self" class="app-nav-link">Admin &rarr;</a>
         </div>
         """,
         unsafe_allow_html=True,
@@ -1678,23 +2060,13 @@ def render_landing() -> None:
     if auth_user:
         stats = _compute_user_stats(auth_user["email"])
 
-        # Hero bar
         st.markdown(
             f"""
-            <div class="dashboard-shell" style="min-height:auto;padding:2rem 2.25rem">
-                <div class="motion-stage" aria-hidden="true">
-                    <div class="med-orbit"></div>
-                    <div class="doctor-figure"></div>
-                    <div class="leaf leaf-one"></div>
-                    <div class="leaf leaf-two"></div>
-                    <div class="flower flower-one"></div>
-                    <div class="pulse-node node-one"></div>
-                    <div class="pulse-node node-two"></div>
-                </div>
-                <div class="dashboard-panel">
+            <div class="user-hero">
+                <div class="user-hero-content">
                     <div class="eyebrow">Welcome back</div>
                     <h1>{_html.escape(auth_user['name'])}</h1>
-                    <p>{_html.escape(auth_user['email'])}</p>
+                    <p>{_html.escape(auth_user['email'])} · Your progress, weak areas, and recent attempts stay synced across sessions.</p>
                 </div>
             </div>
             """,
@@ -1721,7 +2093,7 @@ def render_landing() -> None:
             return
 
         # Summary metrics
-        st.subheader("Your Performance Overview")
+        st.markdown('<div class="section-kicker">Performance</div><h2 class="section-title">Your study dashboard</h2>', unsafe_allow_html=True)
         m1, m2, m3, m4 = st.columns(4)
         m1.metric("Quizzes taken",     stats["total_quizzes"])
         m2.metric("Avg accuracy",      f"{stats['avg_accuracy']}%")
@@ -1731,46 +2103,40 @@ def render_landing() -> None:
         # Weak areas + strong areas
         perf_col, recent_col = st.columns([1, 1])
         with perf_col:
-            st.markdown('<div class="card">', unsafe_allow_html=True)
+            st.markdown('<div class="insight-card"><strong>Subject signal</strong>', unsafe_allow_html=True)
             if stats["weak_subjects"]:
-                st.markdown("**⚠\ufe0f Needs improvement**")
                 for subj, pct in stats["weak_subjects"]:
-                    bar = int(pct / 5)  # 0-20 blocks
                     colour = "#dc143c" if pct < 50 else "#e06030"
                     st.markdown(
-                        f'<div style="display:flex;align-items:center;gap:0.6rem;margin:0.3rem 0">'
-                        f'<span style="flex:0 0 160px;font-size:0.88rem">{_html.escape(subj)}</span>'
-                        f'<div style="flex:1;background:rgba(255,255,255,0.08);border-radius:4px;height:8px">'
-                        f'<div style="width:{pct}%;background:{colour};height:100%;border-radius:4px"></div></div>'
-                        f'<span style="font-size:0.82rem;color:var(--muted);min-width:3rem">{pct}%</span>'
+                        f'<div class="progress-row">'
+                        f'<span>{_html.escape(subj)}</span>'
+                        f'<div class="progress-track"><div class="progress-fill" style="width:{pct}%;background:{colour}"></div></div>'
+                        f'<span style="color:var(--muted)">{pct}%</span>'
                         f'</div>',
                         unsafe_allow_html=True,
                     )
             if stats["strong_subjects"]:
-                st.markdown("**✅ Strong subjects**")
                 for subj, pct in stats["strong_subjects"][:3]:
                     st.markdown(
-                        f'<div style="display:flex;align-items:center;gap:0.6rem;margin:0.3rem 0">'
-                        f'<span style="flex:0 0 160px;font-size:0.88rem">{_html.escape(subj)}</span>'
-                        f'<div style="flex:1;background:rgba(255,255,255,0.08);border-radius:4px;height:8px">'
-                        f'<div style="width:{pct}%;background:#22c55e;height:100%;border-radius:4px"></div></div>'
-                        f'<span style="font-size:0.82rem;color:var(--muted);min-width:3rem">{pct}%</span>'
+                        f'<div class="progress-row">'
+                        f'<span>{_html.escape(subj)}</span>'
+                        f'<div class="progress-track"><div class="progress-fill" style="width:{pct}%;background:#22c55e"></div></div>'
+                        f'<span style="color:var(--muted)">{pct}%</span>'
                         f'</div>',
                         unsafe_allow_html=True,
                     )
             st.markdown('</div>', unsafe_allow_html=True)
 
         with recent_col:
-            st.markdown('<div class="card"><strong>📌 Recent attempts</strong><br/><br/>', unsafe_allow_html=True)
+            st.markdown('<div class="insight-card"><strong>Recent attempts</strong>', unsafe_allow_html=True)
             for att in stats["recent_attempts"]:
                 acc    = att.get("accuracy", 0)
                 colour = "#22c55e" if acc >= 70 else ("#e06030" if acc >= 50 else "#dc143c")
                 st.markdown(
-                    f'<div style="display:flex;justify-content:space-between;align-items:center;'
-                    f'padding:0.4rem 0;border-bottom:1px solid var(--line);font-size:0.85rem">'
-                    f'<span style="max-width:58%">{_html.escape(att.get("quiz_title","Quiz"))}</span>'
+                    f'<div class="recent-row">'
+                    f'<span>{_html.escape(att.get("quiz_title","Quiz"))}</span>'
                     f'<span style="color:{colour};font-weight:700">{acc}%</span>'
-                    f'<span style="color:var(--muted);font-size:0.78rem">{att.get("completed_at","")[:10]}</span>'
+                    f'<span style="color:var(--muted)">{att.get("completed_at","")[:10]}</span>'
                     f'</div>',
                     unsafe_allow_html=True,
                 )
@@ -1907,7 +2273,7 @@ def render_admin_dashboard() -> None:
     if not os.path.exists(QUIZZES_FILE):
         st.info("⚠️ **Ephemeral storage notice** — On Streamlit Cloud, quizzes are stored in a file that resets when the server restarts. Use the ‘Load sample quiz\u2019 button or re-upload your PDFs after a restart. For permanent storage, configure a database connection.")
 
-    tab_build, tab_lib, tab_att = st.tabs(["Build Quiz", "Quiz Library", "Attempts"])
+    tab_build, tab_lib, tab_att, tab_feedback = st.tabs(["Build Quiz", "Quiz Library", "Attempts", "Feedback"])
 
     # ── TAB 1: BUILD QUIZ ───────────────────────────────────────────────
     with tab_build:
@@ -2335,10 +2701,39 @@ def render_admin_dashboard() -> None:
                         c5.write(att.get("completed_at", "")[:10])
                         st.divider()
 
+    # ── TAB 4: FEEDBACK ───────────────────────────────────────────────────
+    with tab_feedback:
+        feedback_rows = load_feedback()
+        if not feedback_rows:
+            st.info("No quiz feedback submitted yet.")
+        else:
+            for row in feedback_rows:
+                created_at = str(row.get("created_at", ""))[:19]
+                label = f"{row.get('quiz_title', 'Quiz')}  —  {row.get('rating', '—')}/5  —  {created_at}"
+                with st.expander(label):
+                    st.write(f"**Student:** {row.get('candidate', '—')} · {row.get('email', '—')}")
+                    st.write(f"**Rating:** {row.get('rating', '—')}/5")
+                    comments = row.get("comments") or "—"
+                    next_quiz = row.get("next_quiz") or "—"
+                    st.write(f"**How was the test:** {comments}")
+                    st.write(f"**Wanted for next quiz:** {next_quiz}")
+
 
 def render_public_dashboard() -> None:
     auth_user = _get_auth_user() if _clerk_auth_available() else None
-    st.title("Candidate Quiz Portal")
+    published_quizzes = [quiz for quiz in st.session_state.quizzes if quiz.get("status", "published") == "published"]
+    st.markdown(
+        f"""
+        <div class="portal-hero">
+            <div>
+                <div class="section-kicker" style="margin:0">Practice library</div>
+                <h1>Candidate Quiz Portal</h1>
+                <p>{len(published_quizzes)} published quiz{'zes' if len(published_quizzes) != 1 else ''} available · progress saved to your profile</p>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     if auth_user:
         c1, c2 = st.columns([4, 1])
         c1.markdown(f'<p class="muted">Welcome back, <strong>{_html.escape(auth_user["name"])}</strong>! Choose a quiz below.</p>', unsafe_allow_html=True)
@@ -2349,7 +2744,6 @@ def render_public_dashboard() -> None:
     else:
         st.markdown('<p class="muted">Choose a quiz below. Sign in is required before the first vignette.</p>', unsafe_allow_html=True)
     selected_id = st.session_state.active_quiz_id
-    published_quizzes = [quiz for quiz in st.session_state.quizzes if quiz.get("status", "published") == "published"]
 
     if not published_quizzes:
         st.info("No quizzes are published yet. Please check back after the admin publishes a quiz.")
@@ -2482,10 +2876,17 @@ def render_quiz() -> None:
     question = quiz["questions"][index]
     progress = (index + 1) / total
 
-    top_left, top_right = st.columns([4, 1])
-    with top_left:
-        st.caption(f"Candidate: {st.session_state.user_details['name']}")
-    with top_right:
+    st.markdown(
+        f"""
+        <div class="quiz-topline">
+            <span>Candidate: <strong>{_html.escape(st.session_state.user_details['name'])}</strong></span>
+            <span style="color:var(--muted)">Question {index + 1} of {total}</span>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    _, exit_col = st.columns([5, 1])
+    with exit_col:
         if st.button("Exit quiz", use_container_width=True):
             reset_attempt()
             st.session_state.user_details = {}
@@ -2562,7 +2963,7 @@ def render_results() -> None:
             subj: round(data["correct"] / data["total"] * 100)
             for subj, data in subject_summary.items()
         }
-        save_attempt({
+        attempt = {
             "quiz_id":        st.session_state.active_quiz_id,
             "quiz_title":     quiz["title"],
             "candidate":      st.session_state.user_details.get("name", ""),
@@ -2575,7 +2976,8 @@ def render_results() -> None:
             "total":          total,
             "subject_accuracy": subj_acc,
             "completed_at":   datetime.now().isoformat(timespec="seconds"),
-        })
+        }
+        st.session_state["attempt_id"] = save_attempt(attempt)
         st.session_state["result_saved"] = True
 
     score_col, accuracy_col, correct_col, missed_col = st.columns(4)
@@ -2607,6 +3009,38 @@ def render_results() -> None:
             st.write(f"Your answer: {item['selected']}")
             st.write(f"Correct answer: {item['answer']}")
             st.write(item["rationale"])
+
+    st.markdown(
+        '<div class="feedback-panel"><div class="section-kicker" style="margin:0 0 0.25rem">Feedback</div>'
+        '<h2 class="section-title">Test Feedback</h2>'
+        '<p class="muted" style="margin:0">Help shape the next quiz set with a quick note after reviewing your results.</p></div>',
+        unsafe_allow_html=True,
+    )
+    if st.session_state.get("feedback_submitted"):
+        st.success("Thanks for the feedback. It has been saved.")
+    else:
+        with st.form("quiz_feedback_form"):
+            rating = st.slider("Overall test experience", 1, 5, 4)
+            comments = st.text_area("How was this test?", height=90)
+            next_quiz = st.text_area("What would you want in the next quiz?", height=90)
+            submitted = st.form_submit_button("Submit feedback", use_container_width=True)
+        if submitted:
+            saved = save_feedback({
+                "attempt_id": st.session_state.get("attempt_id"),
+                "quiz_id": st.session_state.active_quiz_id,
+                "quiz_title": quiz["title"],
+                "candidate": st.session_state.user_details.get("name", ""),
+                "email": st.session_state.user_details.get("email", ""),
+                "rating": rating,
+                "comments": comments.strip(),
+                "next_quiz": next_quiz.strip(),
+                "created_at": datetime.now().isoformat(timespec="seconds"),
+            })
+            if saved:
+                st.session_state["feedback_submitted"] = True
+                st.rerun()
+            else:
+                st.error("Could not save feedback. Please try again.")
 
     st.subheader("Error Analysis")
     if not st.session_state.incorrect:
