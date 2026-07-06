@@ -1179,8 +1179,19 @@ def _ensure_db_schema() -> None:
                 )
                 """
             )
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS quiz_library (
+                    id TEXT PRIMARY KEY,
+                    position INTEGER NOT NULL,
+                    payload JSONB NOT NULL,
+                    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+                """
+            )
             cur.execute("CREATE INDEX IF NOT EXISTS idx_quiz_attempts_email ON quiz_attempts (LOWER(email))")
             cur.execute("CREATE INDEX IF NOT EXISTS idx_quiz_feedback_email ON quiz_feedback (LOWER(email))")
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_quiz_library_position ON quiz_library (position)")
 
 
 def _load_attempts_from_db() -> list:
@@ -1342,32 +1353,74 @@ def load_feedback() -> list:
 
 
 def load_quizzes() -> list:
-    """Load all published/draft quizzes from disk, normalising question fields for backwards-compat."""
+    """Load all published/draft quizzes from the configured database or local fallback file."""
+    if _db_available():
+        try:
+            return _load_quizzes_from_db()
+        except Exception as exc:
+            st.warning(f"Database quiz read failed; using local fallback. {exc}")
     try:
         if os.path.exists(QUIZZES_FILE):
             with open(QUIZZES_FILE, "r") as f:
                 data = json.load(f)
-            for quiz in data:
-                for q in quiz.get("questions", []):
-                    q.setdefault("visual_type",   "none")
-                    q.setdefault("diagram_prompt", "")
-                    q.setdefault("diagram_image",  "")
-                    q.setdefault("rationale",      "")
-                    q.setdefault("memory_tip",     "Review this topic in your NEET PG notes.")
-                    q.setdefault("red_flags",      [])
-            return data
+            return _normalize_quizzes(data)
     except Exception:
         pass
     return []
 
 
 def save_quizzes(quizzes: list) -> None:
-    """Persist the full quiz list to disk so every new session sees it."""
+    """Persist the full quiz list to the configured database or local fallback file."""
+    if _db_available():
+        try:
+            _save_quizzes_to_db(quizzes)
+            return
+        except Exception as exc:
+            st.warning(f"Database quiz write failed; using local fallback. {exc}")
     try:
         with open(QUIZZES_FILE, "w") as f:
             json.dump(quizzes, f, indent=2)
     except Exception:
         pass
+
+
+def _normalize_quizzes(data: list) -> list:
+    for quiz in data:
+        for q in quiz.get("questions", []):
+            q.setdefault("visual_type",   "none")
+            q.setdefault("diagram_prompt", "")
+            q.setdefault("diagram_image",  "")
+            q.setdefault("rationale",      "")
+            q.setdefault("memory_tip",     "Review this topic in your NEET PG notes.")
+            q.setdefault("red_flags",      [])
+    return data
+
+
+def _load_quizzes_from_db() -> list:
+    from psycopg.rows import dict_row
+
+    _ensure_db_schema()
+    with _db_connect() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute("SELECT payload FROM quiz_library ORDER BY position ASC")
+            return _normalize_quizzes([dict(row["payload"]) for row in cur.fetchall()])
+
+
+def _save_quizzes_to_db(quizzes: list) -> None:
+    from psycopg.types.json import Jsonb
+
+    _ensure_db_schema()
+    with _db_connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute("DELETE FROM quiz_library")
+            for position, quiz in enumerate(quizzes):
+                cur.execute(
+                    """
+                    INSERT INTO quiz_library (id, position, payload, updated_at)
+                    VALUES (%s, %s, %s, NOW())
+                    """,
+                    (quiz.get("id", f"quiz-{position}"), position, Jsonb(quiz)),
+                )
 
 
 # ── Clerk / OIDC authentication helpers ──────────────────────────────────────
@@ -2367,8 +2420,21 @@ def render_admin_dashboard() -> None:
             navigate("landing")
             st.rerun()
 
-    if not os.path.exists(QUIZZES_FILE):
-        st.info("⚠️ **Ephemeral storage notice** — On Streamlit Cloud, quizzes are stored in a file that resets when the server restarts. Use the ‘Load sample quiz\u2019 button or re-upload your PDFs after a restart. For permanent storage, configure a database connection.")
+    if not _db_available():
+        st.info("⚠️ **Local storage mode** — Quizzes, attempts, and feedback are using JSON fallback files. Set DATABASE_URL in Render to store them permanently in PostgreSQL.")
+    elif os.path.exists(QUIZZES_FILE):
+        with st.expander("One-time local quiz migration"):
+            st.caption("A local quizzes.json file exists. If these quizzes are not already in the database, copy them into PostgreSQL once.")
+            if st.button("Copy local quizzes to database", use_container_width=True):
+                try:
+                    with open(QUIZZES_FILE, "r") as f:
+                        local_quizzes = _normalize_quizzes(json.load(f))
+                    save_quizzes(local_quizzes)
+                    st.session_state.quizzes = local_quizzes
+                    st.success(f"Copied {len(local_quizzes)} quiz(es) to the database.")
+                    st.rerun()
+                except Exception as exc:
+                    st.error(f"Could not migrate local quizzes: {exc}")
 
     tab_build, tab_lib, tab_att, tab_feedback = st.tabs(["Build Quiz", "Quiz Library", "Attempts", "Feedback"])
 

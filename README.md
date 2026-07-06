@@ -63,6 +63,7 @@ DATABASE_URL=postgresql://...
 The app creates these tables automatically on first use:
 
 ```text
+quiz_library
 quiz_attempts
 quiz_feedback
 ```
