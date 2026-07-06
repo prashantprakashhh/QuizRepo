@@ -15,6 +15,7 @@ Configure admin and Clerk credentials through Streamlit secrets. For local devel
 ```toml
 ADMIN_PASSWORD = "replace-with-a-strong-admin-password"
 ADMIN_EMAIL = "admin@example.com"
+AUTH_COOKIE_SECRET = "replace-with-a-long-random-cookie-signing-secret"
 DATABASE_URL = "postgresql://user:password@host:5432/database"
 
 [clerk]
@@ -31,6 +32,7 @@ Environment variables are also supported for local development:
 ```bash
 export ADMIN_PASSWORD="replace-with-a-strong-admin-password"
 export ADMIN_EMAIL="admin@example.com"
+export AUTH_COOKIE_SECRET="replace-with-a-long-random-cookie-signing-secret"
 export DATABASE_URL="postgresql://user:password@host:5432/database"
 export CLERK_CLIENT_ID="your-clerk-oauth-client-id"
 export CLERK_CLIENT_SECRET="your-clerk-oauth-client-secret"
@@ -49,6 +51,8 @@ Use `?view=admin` for admin login and `?view=public` for the public quiz portal.
 ## Database Storage
 
 Set `DATABASE_URL` to a PostgreSQL connection string to store student attempts/progress and post-quiz feedback in a database. If `DATABASE_URL` is not configured, the app falls back to local JSON files for development.
+
+Set `AUTH_COOKIE_SECRET` to any long random string in production. It signs the app's browser session cookie so users stay signed in after refresh while Sign out still clears the session.
 
 On Render, create a PostgreSQL database, copy its **Internal Database URL**, and add it to the web service environment variables as:
 
@@ -78,6 +82,7 @@ Do not commit real passwords or Clerk secrets. Keep `.streamlit/secrets.toml` an
 ```toml
 ADMIN_PASSWORD = "replace-with-a-strong-admin-password"
 ADMIN_EMAIL = "admin@example.com"
+AUTH_COOKIE_SECRET = "replace-with-a-long-random-cookie-signing-secret"
 DATABASE_URL = "postgresql://user:password@host:5432/database"
 
 [clerk]

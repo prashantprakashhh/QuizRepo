@@ -1,14 +1,18 @@
 import html as _html
 import base64
+import hashlib
+import hmac
 import json
 import os
 import re
 import secrets as _secrets
+import time
 from copy import deepcopy
 from datetime import datetime
 from typing import Any, Optional
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 try:
     import pdfplumber as _pdfplumber
@@ -19,6 +23,8 @@ APP_TITLE = "MedQuiz: NEET PG Prep"
 ADMIN_QUERY_TOKEN = "admin"
 PUBLIC_QUERY_TOKEN = "public"
 HISTORY_QUERY_TOKEN = "history"
+AUTH_COOKIE_NAME = "quizrepo_auth"
+AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 30
 ATTEMPTS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "quiz_attempts.json")
 QUIZZES_FILE  = os.path.join(os.path.dirname(os.path.abspath(__file__)), "quizzes.json")
 USER_DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "user_data.json")
@@ -91,6 +97,93 @@ def _get_env_config(*names: str) -> str:
         if value:
             return value
     return ""
+
+
+def _auth_cookie_secret() -> str:
+    explicit_secret = get_secret("AUTH_COOKIE_SECRET", "")
+    if explicit_secret:
+        return explicit_secret
+    try:
+        clerk_secret = _clerk_config().get("client_secret", "")
+    except Exception:
+        clerk_secret = ""
+    return clerk_secret or get_secret("ADMIN_PASSWORD", "")
+
+
+def _sign_auth_payload(payload_b64: str) -> str:
+    secret = _auth_cookie_secret().encode("utf-8")
+    return hmac.new(secret, payload_b64.encode("utf-8"), hashlib.sha256).hexdigest()
+
+
+def _encode_auth_cookie(user: dict) -> str:
+    payload = {
+        "user": {
+            "name": user.get("name", ""),
+            "email": user.get("email", ""),
+            "id": user.get("id", user.get("email", "")),
+        },
+        "exp": int(time.time()) + AUTH_COOKIE_MAX_AGE,
+    }
+    payload_json = json.dumps(payload, separators=(",", ":"), sort_keys=True).encode("utf-8")
+    payload_b64 = base64.urlsafe_b64encode(payload_json).decode("utf-8").rstrip("=")
+    return f"{payload_b64}.{_sign_auth_payload(payload_b64)}"
+
+
+def _decode_auth_cookie(token: str) -> Optional[dict]:
+    if not token or "." not in token or not _auth_cookie_secret():
+        return None
+    payload_b64, signature = token.split(".", 1)
+    expected_signature = _sign_auth_payload(payload_b64)
+    if not hmac.compare_digest(signature, expected_signature):
+        return None
+    try:
+        padded = payload_b64 + "=" * (-len(payload_b64) % 4)
+        payload = json.loads(base64.urlsafe_b64decode(padded.encode("utf-8")))
+    except Exception:
+        return None
+    if int(payload.get("exp", 0)) < int(time.time()):
+        return None
+    user = payload.get("user", {})
+    if not user.get("email"):
+        return None
+    return user
+
+
+def _browser_auth_cookie() -> str:
+    try:
+        return st.context.cookies.get(AUTH_COOKIE_NAME, "")
+    except Exception:
+        return ""
+
+
+def _restore_auth_from_cookie() -> None:
+    user = _decode_auth_cookie(_browser_auth_cookie())
+    if user:
+        st.session_state["clerk_user"] = user
+
+
+def _write_auth_cookie(token: str, max_age: int) -> None:
+    name_js = json.dumps(AUTH_COOKIE_NAME)
+    token_js = json.dumps(token)
+    components.html(
+        f"""
+        <script>
+        const secure = window.location.protocol === "https:" ? "; Secure" : "";
+        document.cookie = {name_js} + "=" + {token_js} + "; path=/; max-age={max_age}; SameSite=Lax" + secure;
+        </script>
+        """,
+        height=0,
+        width=0,
+    )
+
+
+def _sync_auth_cookie() -> None:
+    if st.session_state.pop("_clear_auth_cookie", False):
+        _write_auth_cookie("", 0)
+        return
+    user = st.session_state.get("clerk_user")
+    if user:
+        _write_auth_cookie(_encode_auth_cookie(user), AUTH_COOKIE_MAX_AGE)
 
 
 def inject_css() -> None:
@@ -914,6 +1007,9 @@ def initialize_state() -> None:
         if key not in st.session_state:
             st.session_state[key] = deepcopy(value)
 
+    if not st.session_state.get("clerk_user"):
+        _restore_auth_from_cookie()
+
     st.session_state.quizzes = [
         quiz for quiz in st.session_state.quizzes if quiz.get("id") != "neet-pg-clinical-core"
     ]
@@ -1425,6 +1521,7 @@ def _clerk_exchange_code(code: str) -> Optional[dict]:
 def _clerk_sign_out() -> None:
     """Sign the user out by clearing the Clerk session cache."""
     st.session_state.pop("clerk_user", None)
+    st.session_state["_clear_auth_cookie"] = True
     st.query_params.clear()
 
 
@@ -3131,6 +3228,7 @@ def main() -> None:
     st.set_page_config(page_title=APP_TITLE, page_icon="NP", layout="wide")
     inject_css()
     initialize_state()
+    _sync_auth_cookie()
     render_sidebar()
 
     # State machine routing: landing -> dashboard/login -> registration -> quiz -> results.
