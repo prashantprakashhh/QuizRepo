@@ -18,6 +18,7 @@ except ImportError:
 APP_TITLE = "MedQuiz: NEET PG Prep"
 ADMIN_QUERY_TOKEN = "admin"
 PUBLIC_QUERY_TOKEN = "public"
+HISTORY_QUERY_TOKEN = "history"
 ATTEMPTS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "quiz_attempts.json")
 QUIZZES_FILE  = os.path.join(os.path.dirname(os.path.abspath(__file__)), "quizzes.json")
 USER_DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "user_data.json")
@@ -754,7 +755,10 @@ def initialize_state() -> None:
     quiz_id = st.query_params.get("quiz_id")
     public_stages = {"public_dashboard", "registration", "quiz_active", "results"}
     admin_stages = {"admin_login", "admin_dashboard"}
-    if view == PUBLIC_QUERY_TOKEN and st.session_state.stage not in public_stages:
+    if view == HISTORY_QUERY_TOKEN:
+        st.session_state.role = "guest"
+        st.session_state.stage = "user_history" if _get_auth_user() else "landing"
+    elif view == PUBLIC_QUERY_TOKEN and st.session_state.stage not in public_stages:
         st.session_state.role = "guest"
         st.session_state.stage = "public_dashboard"
         if quiz_id:
@@ -765,6 +769,20 @@ def initialize_state() -> None:
 
 def set_stage(stage: str) -> None:
     st.session_state.stage = stage
+
+
+def navigate(stage: str, **params: str) -> None:
+    set_stage(stage)
+    st.query_params.clear()
+    if stage in {"public_dashboard", "registration", "quiz_active", "results"}:
+        st.query_params["view"] = PUBLIC_QUERY_TOKEN
+        quiz_id = params.get("quiz_id") or st.session_state.get("active_quiz_id")
+        if quiz_id:
+            st.query_params["quiz_id"] = quiz_id
+    elif stage in {"admin_login", "admin_dashboard"}:
+        st.query_params["view"] = ADMIN_QUERY_TOKEN
+    elif stage == "user_history":
+        st.query_params["view"] = HISTORY_QUERY_TOKEN
 
 
 def reset_attempt() -> None:
@@ -778,7 +796,7 @@ def reset_attempt() -> None:
 def start_registration(quiz_id: str) -> None:
     reset_attempt()
     st.session_state.active_quiz_id = quiz_id
-    set_stage("registration")
+    navigate("registration", quiz_id=quiz_id)
 
 
 def get_active_quiz() -> Optional[dict[str, Any]]:
@@ -1687,12 +1705,11 @@ def render_landing() -> None:
         ca, cb, cc = st.columns([2, 1, 1])
         with ca:
             if st.button("📚  Browse & Attempt Quizzes", use_container_width=True):
-                st.query_params["view"] = PUBLIC_QUERY_TOKEN
-                set_stage("public_dashboard")
+                navigate("public_dashboard")
                 st.rerun()
         with cb:
             if st.button("My Full History", use_container_width=True):
-                set_stage("user_history")
+                navigate("user_history")
                 st.rerun()
         with cc:
             if st.button("Sign out", use_container_width=True):
@@ -1845,7 +1862,7 @@ def render_admin_login() -> None:
     if _clerk_auth_available() and _is_admin_email() and _get_auth_user():
         st.session_state.admin_authenticated = True
         st.session_state.role = "admin"
-        set_stage("admin_dashboard")
+        navigate("admin_dashboard")
         st.rerun()
 
     st.title("Admin Login")
@@ -1860,14 +1877,13 @@ def render_admin_login() -> None:
         login_clicked = st.button("Login", use_container_width=True)
     with back_col:
         if st.button("Back to Dashboard", use_container_width=True):
-            st.query_params.clear()
-            set_stage("landing")
+            navigate("landing")
             st.rerun()
     if login_clicked:
         if password == expected_password:
             st.session_state.admin_authenticated = True
             st.session_state.role = "admin"
-            set_stage("admin_dashboard")
+            navigate("admin_dashboard")
             st.rerun()
         else:
             st.error("You really thought you can hack my system? Stop trying, kindly attempt the quiz and study 😄")
@@ -1875,7 +1891,7 @@ def render_admin_login() -> None:
 
 def render_admin_dashboard() -> None:
     if not st.session_state.admin_authenticated:
-        set_stage("admin_login")
+        navigate("admin_login")
         st.rerun()
 
     col_t, col_o = st.columns([5, 1])
@@ -1885,7 +1901,7 @@ def render_admin_dashboard() -> None:
         if st.button("Sign out", use_container_width=True):
             st.session_state.admin_authenticated = False
             st.session_state.role = "guest"
-            set_stage("landing")
+            navigate("landing")
             st.rerun()
 
     if not os.path.exists(QUIZZES_FILE):
@@ -2328,7 +2344,7 @@ def render_public_dashboard() -> None:
         c1.markdown(f'<p class="muted">Welcome back, <strong>{_html.escape(auth_user["name"])}</strong>! Choose a quiz below.</p>', unsafe_allow_html=True)
         with c2:
             if st.button("My History", use_container_width=True):
-                set_stage("user_history")
+                navigate("user_history")
                 st.rerun()
     else:
         st.markdown('<p class="muted">Choose a quiz below. Sign in is required before the first vignette.</p>', unsafe_allow_html=True)
@@ -2338,7 +2354,7 @@ def render_public_dashboard() -> None:
     if not published_quizzes:
         st.info("No quizzes are published yet. Please check back after the admin publishes a quiz.")
         if st.button("Back"):
-            set_stage("landing")
+            navigate("landing")
             st.rerun()
         return
 
@@ -2369,7 +2385,7 @@ def render_registration() -> None:
     quiz = get_active_quiz()
     if not quiz:
         st.error("Quiz not found.")
-        set_stage("public_dashboard")
+        navigate("public_dashboard")
         return
 
     # ─ Clerk path: skip the manual form entirely ─────────────────────────────────
@@ -2390,7 +2406,7 @@ def render_registration() -> None:
                         unsafe_allow_html=True,
                     )
             if st.button("Back", use_container_width=True):
-                set_stage("public_dashboard")
+                navigate("public_dashboard")
                 st.rerun()
             return
         # Use Clerk identity — jump straight into the quiz
@@ -2399,7 +2415,7 @@ def render_registration() -> None:
             "email":      auth_user["email"],
             "started_at": datetime.now().isoformat(timespec="seconds"),
         }
-        set_stage("quiz_active")
+        navigate("quiz_active")
         st.rerun()
         return
 
@@ -2422,7 +2438,7 @@ def render_registration() -> None:
             "email":      email.strip(),
             "started_at": datetime.now().isoformat(timespec="seconds"),
         }
-        set_stage("quiz_active")
+        navigate("quiz_active")
         st.rerun()
 
 
@@ -2448,17 +2464,17 @@ def submit_answer(question: dict[str, Any], selected: str) -> None:
     st.session_state.current_question_index += 1
     quiz = get_active_quiz()
     if quiz and st.session_state.current_question_index >= len(quiz["questions"]):
-        set_stage("results")
+        navigate("results")
 
 
 def render_quiz() -> None:
     quiz = get_active_quiz()
     if not quiz:
         st.error("Quiz not found.")
-        set_stage("public_dashboard")
+        navigate("public_dashboard")
         return
     if not st.session_state.user_details:
-        set_stage("registration")
+        navigate("registration")
         st.rerun()
 
     total = len(quiz["questions"])
@@ -2466,7 +2482,15 @@ def render_quiz() -> None:
     question = quiz["questions"][index]
     progress = (index + 1) / total
 
-    st.caption(f"Candidate: {st.session_state.user_details['name']}")
+    top_left, top_right = st.columns([4, 1])
+    with top_left:
+        st.caption(f"Candidate: {st.session_state.user_details['name']}")
+    with top_right:
+        if st.button("Exit quiz", use_container_width=True):
+            reset_attempt()
+            st.session_state.user_details = {}
+            navigate("public_dashboard")
+            st.rerun()
     st.progress(progress, text=f"Question {index + 1} of {total}")
     st.markdown(
         f"""
@@ -2509,7 +2533,7 @@ def render_results() -> None:
     quiz = get_active_quiz()
     if not quiz:
         st.error("Quiz not found.")
-        set_stage("public_dashboard")
+        navigate("public_dashboard")
         return
 
     total = len(quiz["questions"])
@@ -2616,13 +2640,13 @@ def render_results() -> None:
     with col_retry:
         if st.button("Retry this quiz", use_container_width=True):
             reset_attempt()
-            set_stage("registration")
+            navigate("registration")
             st.rerun()
     with col_home:
         if st.button("Back to public dashboard", use_container_width=True):
             reset_attempt()
             st.session_state.user_details = {}
-            set_stage("public_dashboard")
+            navigate("public_dashboard")
             st.rerun()
 
 
@@ -2630,7 +2654,7 @@ def render_user_history() -> None:
     """Show all quiz attempts for the current Clerk-authenticated user."""
     auth_user = _get_auth_user()
     if not auth_user:
-        set_stage("landing")
+        navigate("landing")
         st.rerun()
 
     st.title("My Quiz History")
@@ -2665,7 +2689,7 @@ def render_user_history() -> None:
                 c3.metric("Correct", f"{att.get('correct', 0)}/{att.get('total', 0)}")
 
     if st.button("Back to Quiz Portal", use_container_width=True):
-        set_stage("public_dashboard")
+        navigate("public_dashboard")
         st.rerun()
 
 
