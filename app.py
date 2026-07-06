@@ -1595,6 +1595,33 @@ def _is_admin_email() -> bool:
     return bool(admin_email and user and user["email"].lower() == admin_email.lower())
 
 
+def _sign_out_and_return_home() -> None:
+    _clerk_sign_out()
+    st.session_state["admin_authenticated"] = False
+    st.session_state["role"] = "guest"
+    st.session_state["user_details"] = {}
+    navigate("landing")
+    st.rerun()
+
+
+def render_user_top_actions(show_history: bool = True) -> None:
+    auth_user = _get_auth_user() if _clerk_auth_available() else None
+    if not auth_user:
+        return
+    cols = st.columns([5, 1, 1] if show_history else [6, 1])
+    if show_history:
+        with cols[1]:
+            if st.button("My History", key="top-my-history", use_container_width=True):
+                navigate("user_history")
+                st.rerun()
+        signout_col = cols[2]
+    else:
+        signout_col = cols[1]
+    with signout_col:
+        if st.button("Sign out", key="top-sign-out", use_container_width=True):
+            _sign_out_and_return_home()
+
+
 # ── PDF parsing helpers ──────────────────────────────────────────────────────
 
 def _extract_pdf_text(file_bytes: bytes) -> str:
@@ -2192,19 +2219,17 @@ def render_landing() -> None:
     auth_user = _get_auth_user() if _clerk_auth_available() else None
 
     # ── TOP NAV (always rendered) ─────────────────────────────────────────────────────────
-    admin_href = (
-        '?view=admin' if not (_is_admin_email() and auth_user)
-        else '?view=admin'
-    )
+    admin_link = '<a href="?view=admin" target="_self" class="app-nav-link">Admin &rarr;</a>' if (not auth_user or _is_admin_email()) else ''
     st.markdown(
         f"""
         <div class="app-topbar">
             <span class="app-brand">QuizRepo</span>
-            <a href="{admin_href}" target="_self" class="app-nav-link">Admin &rarr;</a>
+            {admin_link}
         </div>
         """,
         unsafe_allow_html=True,
     )
+    render_user_top_actions()
 
     # ── LOGGED-IN: PERSONALISED DASHBOARD ──────────────────────────────────────────────
     if auth_user:
@@ -2224,7 +2249,7 @@ def render_landing() -> None:
         )
 
         # Action buttons
-        ca, cb, cc = st.columns([2, 1, 1])
+        ca, cb = st.columns([2, 1])
         with ca:
             if st.button("📚  Browse & Attempt Quizzes", use_container_width=True):
                 navigate("public_dashboard")
@@ -2232,10 +2257,6 @@ def render_landing() -> None:
         with cb:
             if st.button("My Full History", use_container_width=True):
                 navigate("user_history")
-                st.rerun()
-        with cc:
-            if st.button("Sign out", use_container_width=True):
-                _clerk_sign_out()
                 st.rerun()
 
         if not stats:
@@ -2380,6 +2401,14 @@ def render_admin_login() -> None:
         st.session_state.role = "admin"
         navigate("admin_dashboard")
         st.rerun()
+    auth_user = _get_auth_user() if _clerk_auth_available() else None
+    if auth_user and not _is_admin_email():
+        render_user_top_actions(show_history=False)
+        st.info("Admin access is restricted for this signed-in student account.")
+        if st.button("Back to dashboard", use_container_width=True):
+            navigate("landing")
+            st.rerun()
+        return
 
     st.title("Admin Login")
     st.markdown('<p class="muted">Only an administrator can prepare, draft, or publish quizzes.</p>', unsafe_allow_html=True)
@@ -2415,10 +2444,7 @@ def render_admin_dashboard() -> None:
         st.title("Admin Dashboard")
     with col_o:
         if st.button("Sign out", use_container_width=True):
-            st.session_state.admin_authenticated = False
-            st.session_state.role = "guest"
-            navigate("landing")
-            st.rerun()
+            _sign_out_and_return_home()
 
     if not _db_available():
         st.info("⚠️ **Local storage mode** — Quizzes, attempts, and feedback are using JSON fallback files. Set DATABASE_URL in Render to store them permanently in PostgreSQL.")
@@ -2885,6 +2911,7 @@ def render_admin_dashboard() -> None:
 def render_public_dashboard() -> None:
     auth_user = _get_auth_user() if _clerk_auth_available() else None
     published_quizzes = [quiz for quiz in st.session_state.quizzes if quiz.get("status", "published") == "published"]
+    render_user_top_actions()
     st.markdown(
         f"""
         <div class="portal-hero">
@@ -3025,6 +3052,7 @@ def submit_answer(question: dict[str, Any], selected: str) -> None:
 
 
 def render_quiz() -> None:
+    render_user_top_actions(show_history=False)
     quiz = get_active_quiz()
     if not quiz:
         st.error("Quiz not found.")
@@ -3094,6 +3122,7 @@ def render_quiz() -> None:
 
 
 def render_results() -> None:
+    render_user_top_actions()
     quiz = get_active_quiz()
     if not quiz:
         st.error("Quiz not found.")
@@ -3216,20 +3245,18 @@ def render_results() -> None:
         rationale = _html.escape(item["rationale"]).replace("\n", " ")
         mem_tip  = _html.escape(item["memory_tip"])
         st.markdown(
-            f"""
-            <div class="result-card">
-                <div class="pill-row">
-                    <span class="pill">{_html.escape(item['specialty'])}</span>
-                    <span class="pill">{_html.escape(item['difficulty'])}</span>
-                    {flags}
-                </div>
-                <p><strong>Question:</strong> {q_text}</p>
-                <p><strong>Your answer:</strong> {selected}</p>
-                <p><strong>Correct answer:</strong> {correct}</p>
-                <p><strong>Rationale:</strong> {rationale}</p>
-                <div class="mnemonic"><strong>Memory tip:</strong> {mem_tip}</div>
-            </div>
-            """,
+            '<div class="result-card">'
+            '<div class="pill-row">'
+            f'<span class="pill">{_html.escape(item["specialty"])}</span>'
+            f'<span class="pill">{_html.escape(item["difficulty"])}</span>'
+            f'{flags}'
+            '</div>'
+            f'<p><strong>Question:</strong> {q_text}</p>'
+            f'<p><strong>Your answer:</strong> {selected}</p>'
+            f'<p><strong>Correct answer:</strong> {correct}</p>'
+            f'<p><strong>Rationale:</strong> {rationale}</p>'
+            f'<div class="mnemonic"><strong>Memory tip:</strong> {mem_tip}</div>'
+            '</div>',
             unsafe_allow_html=True,
         )
 
@@ -3254,6 +3281,7 @@ def render_user_history() -> None:
         navigate("landing")
         st.rerun()
 
+    render_user_top_actions(show_history=False)
     st.title("My Quiz History")
     st.caption(f"Signed in as {auth_user['email']}")
 
