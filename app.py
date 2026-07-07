@@ -24,6 +24,7 @@ ADMIN_QUERY_TOKEN = "admin"
 PUBLIC_QUERY_TOKEN = "public"
 HISTORY_QUERY_TOKEN = "history"
 AUTH_COOKIE_NAME = "quizrepo_auth"
+ADMIN_COOKIE_NAME = "quizrepo_admin"
 AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 30
 ATTEMPTS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "quiz_attempts.json")
 QUIZZES_FILE  = os.path.join(os.path.dirname(os.path.abspath(__file__)), "quizzes.json")
@@ -129,6 +130,16 @@ def _encode_auth_cookie(user: dict) -> str:
     return f"{payload_b64}.{_sign_auth_payload(payload_b64)}"
 
 
+def _encode_admin_cookie() -> str:
+    payload = {
+        "admin": True,
+        "exp": int(time.time()) + AUTH_COOKIE_MAX_AGE,
+    }
+    payload_json = json.dumps(payload, separators=(",", ":"), sort_keys=True).encode("utf-8")
+    payload_b64 = base64.urlsafe_b64encode(payload_json).decode("utf-8").rstrip("=")
+    return f"{payload_b64}.{_sign_auth_payload(payload_b64)}"
+
+
 def _decode_auth_cookie(token: str) -> Optional[dict]:
     if not token or "." not in token or not _auth_cookie_secret():
         return None
@@ -149,9 +160,31 @@ def _decode_auth_cookie(token: str) -> Optional[dict]:
     return user
 
 
+def _decode_admin_cookie(token: str) -> bool:
+    if not token or "." not in token or not _auth_cookie_secret():
+        return False
+    payload_b64, signature = token.split(".", 1)
+    expected_signature = _sign_auth_payload(payload_b64)
+    if not hmac.compare_digest(signature, expected_signature):
+        return False
+    try:
+        padded = payload_b64 + "=" * (-len(payload_b64) % 4)
+        payload = json.loads(base64.urlsafe_b64decode(padded.encode("utf-8")))
+    except Exception:
+        return False
+    return bool(payload.get("admin") and int(payload.get("exp", 0)) >= int(time.time()))
+
+
 def _browser_auth_cookie() -> str:
     try:
         return st.context.cookies.get(AUTH_COOKIE_NAME, "")
+    except Exception:
+        return ""
+
+
+def _browser_admin_cookie() -> str:
+    try:
+        return st.context.cookies.get(ADMIN_COOKIE_NAME, "")
     except Exception:
         return ""
 
@@ -160,6 +193,12 @@ def _restore_auth_from_cookie() -> None:
     user = _decode_auth_cookie(_browser_auth_cookie())
     if user:
         st.session_state["clerk_user"] = user
+
+
+def _restore_admin_from_cookie() -> None:
+    if _decode_admin_cookie(_browser_admin_cookie()):
+        st.session_state["admin_authenticated"] = True
+        st.session_state["role"] = "admin"
 
 
 def _write_auth_cookie(token: str, max_age: int) -> None:
@@ -177,13 +216,31 @@ def _write_auth_cookie(token: str, max_age: int) -> None:
     )
 
 
+def _write_named_cookie(name: str, token: str, max_age: int) -> None:
+    name_js = json.dumps(name)
+    token_js = json.dumps(token)
+    components.html(
+        f"""
+        <script>
+        const secure = window.location.protocol === "https:" ? "; Secure" : "";
+        document.cookie = {name_js} + "=" + {token_js} + "; path=/; max-age={max_age}; SameSite=Lax" + secure;
+        </script>
+        """,
+        height=0,
+        width=0,
+    )
+
+
 def _sync_auth_cookie() -> None:
     if st.session_state.pop("_clear_auth_cookie", False):
         _write_auth_cookie("", 0)
+        _write_named_cookie(ADMIN_COOKIE_NAME, "", 0)
         return
     user = st.session_state.get("clerk_user")
     if user:
         _write_auth_cookie(_encode_auth_cookie(user), AUTH_COOKIE_MAX_AGE)
+    if st.session_state.get("admin_authenticated"):
+        _write_named_cookie(ADMIN_COOKIE_NAME, _encode_admin_cookie(), AUTH_COOKIE_MAX_AGE)
 
 
 def inject_css() -> None:
@@ -202,6 +259,9 @@ def inject_css() -> None:
             --accent: #ff6b6b;
             --soft: rgba(220, 20, 60, 0.12);
             --danger: #ff3366;
+            --glass: rgba(255, 255, 255, 0.065);
+            --glass-strong: rgba(255, 255, 255, 0.105);
+            --glass-line: rgba(255, 255, 255, 0.16);
         }
 
         html, body, [class*="css"] {
@@ -210,13 +270,31 @@ def inject_css() -> None:
         }
 
         .stApp {
+            position: relative;
             background:
                 radial-gradient(circle at 18% 8%, rgba(220, 20, 60, 0.22), transparent 28rem),
                 radial-gradient(circle at 86% 18%, rgba(180, 10, 50, 0.16), transparent 25rem),
                 linear-gradient(180deg, #050003 0%, #0c0006 48%, #040002 100%);
         }
 
+        .stApp::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                linear-gradient(115deg, transparent 0 32%, rgba(255,255,255,0.035) 43%, transparent 54% 100%),
+                linear-gradient(rgba(255,255,255,0.026) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.020) 1px, transparent 1px);
+            background-size: 220% 100%, 72px 72px, 72px 72px;
+            mask-image: radial-gradient(circle at 50% 20%, black, transparent 78%);
+            animation: glassSweep 18s ease-in-out infinite;
+        }
+
         .block-container {
+            position: relative;
+            z-index: 1;
             max-width: 1180px;
             padding-top: 1.5rem;
             padding-bottom: 4rem;
@@ -278,14 +356,36 @@ def inject_css() -> None:
             position: relative;
             overflow: hidden;
             min-height: 580px;
-            border: 1px solid var(--line);
+            border: 1px solid var(--glass-line);
             border-radius: 14px;
             background:
                 radial-gradient(circle at 76% 24%, rgba(220, 20, 60, 0.22), transparent 17rem),
                 radial-gradient(circle at 88% 72%, rgba(180, 10, 50, 0.16), transparent 18rem),
-                linear-gradient(135deg, rgba(15, 1, 8, 0.96), rgba(5, 0, 3, 0.92));
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 30px 80px rgba(0,0,0,0.35);
+                linear-gradient(135deg, rgba(255,255,255,0.075), rgba(5, 0, 3, 0.84));
+            backdrop-filter: blur(18px) saturate(1.25);
+            -webkit-backdrop-filter: blur(18px) saturate(1.25);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 30px 80px rgba(0,0,0,0.35);
             padding: 3.2rem 2.25rem 2rem;
+        }
+
+        .dashboard-shell::before,
+        .user-hero::before,
+        .portal-hero::before,
+        .card::before,
+        .vignette-card::before,
+        .result-card::before,
+        .quiz-card::before,
+        .insight-card::before,
+        .feedback-panel::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            border-radius: inherit;
+            background: linear-gradient(115deg, transparent 0 28%, rgba(255,255,255,0.105) 45%, transparent 62% 100%);
+            transform: translateX(-120%);
+            opacity: 0;
+            animation: panelSheen 9s ease-in-out infinite;
         }
 
         .dashboard-panel {
@@ -334,10 +434,12 @@ def inject_css() -> None:
         }
 
         .landing-metric {
-            background: rgba(255,255,255,0.055);
-            border: 1px solid var(--line);
+            background: var(--glass);
+            border: 1px solid var(--glass-line);
             border-radius: 8px;
             padding: 0.75rem;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
         }
 
         .landing-metric strong {
@@ -461,10 +563,13 @@ def inject_css() -> None:
         }
 
         .feature-tile {
-            background: rgba(17, 24, 39, 0.86);
-            border: 1px solid var(--line);
+            background: var(--glass);
+            border: 1px solid var(--glass-line);
             border-radius: 10px;
             padding: 1rem;
+            backdrop-filter: blur(14px) saturate(1.2);
+            -webkit-backdrop-filter: blur(14px) saturate(1.2);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 12px 32px rgba(0,0,0,0.18);
         }
 
         .feature-tile h3 {
@@ -499,25 +604,29 @@ def inject_css() -> None:
             color: rgba(248,240,240,0.58);
             font-size: 0.78rem;
             text-decoration: none;
-            border: 1px solid rgba(220,20,60,0.22);
+            border: 1px solid var(--glass-line);
             padding: 0.34rem 0.8rem;
             border-radius: 6px;
-            background: rgba(255,255,255,0.035);
+            background: var(--glass);
             letter-spacing: 0.04em;
             white-space: nowrap;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
         .user-hero {
             position: relative;
             overflow: hidden;
-            border: 1px solid rgba(220,20,60,0.22);
+            border: 1px solid var(--glass-line);
             border-radius: 12px;
             padding: 2rem;
             margin-bottom: 1rem;
             background:
-                linear-gradient(115deg, rgba(20,2,10,0.96), rgba(6,0,4,0.94) 54%, rgba(76,7,23,0.62)),
+                linear-gradient(115deg, rgba(255,255,255,0.085), rgba(6,0,4,0.86) 54%, rgba(76,7,23,0.58)),
                 radial-gradient(circle at 84% 18%, rgba(255,107,107,0.18), transparent 18rem);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.055), 0 28px 70px rgba(0,0,0,0.30);
+            backdrop-filter: blur(20px) saturate(1.28);
+            -webkit-backdrop-filter: blur(20px) saturate(1.28);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.13), 0 28px 70px rgba(0,0,0,0.30);
         }
 
         .user-hero::after {
@@ -567,11 +676,16 @@ def inject_css() -> None:
         }
 
         .insight-card {
-            background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.025));
-            border: 1px solid rgba(220,20,60,0.18);
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, var(--glass-strong), rgba(255,255,255,0.035));
+            border: 1px solid var(--glass-line);
             border-radius: 10px;
             padding: 1rem;
             min-height: 100%;
+            backdrop-filter: blur(16px) saturate(1.25);
+            -webkit-backdrop-filter: blur(16px) saturate(1.25);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 16px 40px rgba(0,0,0,0.20);
         }
 
         .insight-card strong {
@@ -619,10 +733,15 @@ def inject_css() -> None:
             align-items: end;
             gap: 1rem;
             padding: 1.35rem 1.4rem;
-            border: 1px solid rgba(220,20,60,0.18);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--glass-line);
             border-radius: 10px;
-            background: linear-gradient(135deg, rgba(20,2,10,0.92), rgba(6,0,4,0.88));
+            background: linear-gradient(135deg, var(--glass-strong), rgba(6,0,4,0.84));
             margin-bottom: 1rem;
+            backdrop-filter: blur(18px) saturate(1.25);
+            -webkit-backdrop-filter: blur(18px) saturate(1.25);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 20px 52px rgba(0,0,0,0.25);
         }
 
         .portal-hero h1 {
@@ -656,17 +775,35 @@ def inject_css() -> None:
             gap: 0.9rem;
             margin-bottom: 0.7rem;
             padding: 0.7rem 0.9rem;
-            border: 1px solid rgba(220,20,60,0.16);
+            border: 1px solid var(--glass-line);
             border-radius: 9px;
-            background: rgba(255,255,255,0.035);
+            background: var(--glass);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
         }
 
         .feedback-panel {
-            border: 1px solid rgba(220,20,60,0.20);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--glass-line);
             border-radius: 10px;
             padding: 1rem;
             margin: 1rem 0;
-            background: linear-gradient(180deg, rgba(255,255,255,0.052), rgba(255,255,255,0.025));
+            background: linear-gradient(180deg, var(--glass-strong), rgba(255,255,255,0.035));
+            backdrop-filter: blur(16px) saturate(1.25);
+            -webkit-backdrop-filter: blur(16px) saturate(1.25);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 16px 40px rgba(0,0,0,0.20);
+        }
+
+        @keyframes glassSweep {
+            0%, 100% { background-position: 180% 0, 0 0, 0 0; opacity: 0.76; }
+            50% { background-position: 20% 0, 34px 22px, -26px 16px; opacity: 1; }
+        }
+
+        @keyframes panelSheen {
+            0%, 72% { transform: translateX(-120%); opacity: 0; }
+            82% { opacity: 0.65; }
+            100% { transform: translateX(120%); opacity: 0; }
         }
 
         @keyframes floatDrift {
@@ -695,10 +832,14 @@ def inject_css() -> None:
         }
 
         .card, .vignette-card, .result-card, .quiz-card {
-            background: var(--surface);
-            border: 1px solid var(--line);
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, var(--glass-strong), rgba(15,1,8,0.72));
+            border: 1px solid var(--glass-line);
             border-radius: 8px;
-            box-shadow: 0 12px 30px rgba(55, 45, 31, 0.08);
+            backdrop-filter: blur(15px) saturate(1.2);
+            -webkit-backdrop-filter: blur(15px) saturate(1.2);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 12px 30px rgba(0,0,0,0.20);
             padding: 1.15rem 1.25rem;
             margin: 0.7rem 0;
         }
@@ -836,6 +977,26 @@ def inject_css() -> None:
             .feature-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         }
 
+        @media (prefers-reduced-motion: reduce) {
+            .stApp::before,
+            .dashboard-shell::before,
+            .user-hero::before,
+            .portal-hero::before,
+            .card::before,
+            .vignette-card::before,
+            .result-card::before,
+            .quiz-card::before,
+            .insight-card::before,
+            .feedback-panel::before,
+            .med-orbit,
+            .doctor-figure,
+            .leaf,
+            .flower,
+            .pulse-node {
+                animation: none !important;
+            }
+        }
+
         .stButton > button:focus:not(:active) {
             border-color: var(--accent);
             box-shadow: 0 0 0 0.18rem rgba(182, 95, 42, 0.22);
@@ -865,11 +1026,13 @@ def inject_css() -> None:
         }
 
         div[data-testid="stMetric"] {
-            background: var(--surface);
-            border: 1px solid var(--line);
+            background: var(--glass);
+            border: 1px solid var(--glass-line);
             border-radius: 8px;
             padding: 1rem;
-            box-shadow: 0 8px 24px rgba(55, 45, 31, 0.07);
+            backdrop-filter: blur(14px) saturate(1.2);
+            -webkit-backdrop-filter: blur(14px) saturate(1.2);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 8px 24px rgba(0,0,0,0.18);
         }
 
         section[data-testid="stSidebar"] { display: none; }
@@ -1009,6 +1172,8 @@ def initialize_state() -> None:
 
     if not st.session_state.get("clerk_user"):
         _restore_auth_from_cookie()
+    if not st.session_state.get("admin_authenticated"):
+        _restore_admin_from_cookie()
 
     st.session_state.quizzes = [
         quiz for quiz in st.session_state.quizzes if quiz.get("id") != "neet-pg-clinical-core"
@@ -1052,7 +1217,7 @@ def initialize_state() -> None:
         if quiz_id:
             st.session_state.active_quiz_id = quiz_id
     elif view == ADMIN_QUERY_TOKEN and st.session_state.stage not in admin_stages:
-        st.session_state.stage = "admin_login"
+        st.session_state.stage = "admin_dashboard" if st.session_state.get("admin_authenticated") else "admin_login"
 
 
 def set_stage(stage: str) -> None:
@@ -2395,6 +2560,9 @@ def render_landing() -> None:
 
 
 def render_admin_login() -> None:
+    if st.session_state.get("admin_authenticated"):
+        navigate("admin_dashboard")
+        st.rerun()
     # If Clerk is configured and the logged-in user's email matches ADMIN_EMAIL, bypass the form
     if _clerk_auth_available() and _is_admin_email() and _get_auth_user():
         st.session_state.admin_authenticated = True
@@ -2432,6 +2600,47 @@ def render_admin_login() -> None:
             st.rerun()
         else:
             st.error("You really thought you can hack my system? Stop trying, kindly attempt the quiz and study 😄")
+
+
+def render_attempt_review(attempt: dict, include_all: bool = False) -> None:
+    responses = attempt.get("responses") or []
+    missed = attempt.get("incorrect_items") or [item for item in responses if not item.get("is_correct")]
+    if not responses:
+        st.caption("Detailed answer review is available for attempts completed after the latest update.")
+        return
+
+    review_items = responses if include_all else missed
+    if not review_items:
+        st.success("No missed questions in this attempt.")
+        return
+
+    heading = "Complete answer review" if include_all else "Missed-question review"
+    st.markdown(f"**{heading}**")
+    for number, item in enumerate(review_items, start=1):
+        verdict = "Correct" if item.get("is_correct") else "Incorrect"
+        badge_colour = "#22c55e" if item.get("is_correct") else "#dc143c"
+        question = _html.escape(str(item.get("question", ""))).replace("\n", " ")
+        selected = _html.escape(str(item.get("selected", "—")))
+        answer = _html.escape(str(item.get("answer", "—")))
+        rationale = _html.escape(str(item.get("rationale", ""))).replace("\n", " ")
+        memory_tip = _html.escape(str(item.get("memory_tip", "")))
+        specialty = _html.escape(str(item.get("specialty", "")))
+        difficulty = _html.escape(str(item.get("difficulty", "")))
+        st.markdown(
+            '<div class="result-card">'
+            '<div class="pill-row">'
+            f'<span class="pill">{specialty}</span>'
+            f'<span class="pill">{difficulty}</span>'
+            f'<span class="pill" style="color:{badge_colour}">{verdict}</span>'
+            '</div>'
+            f'<p><strong>Q{number}:</strong> {question}</p>'
+            f'<p><strong>Selected:</strong> {selected}</p>'
+            f'<p><strong>Correct answer:</strong> {answer}</p>'
+            f'<p><strong>Rationale:</strong> {rationale}</p>'
+            f'<div class="mnemonic"><strong>Memory tip:</strong> {memory_tip}</div>'
+            '</div>',
+            unsafe_allow_html=True,
+        )
 
 
 def render_admin_dashboard() -> None:
@@ -2875,20 +3084,37 @@ def render_admin_dashboard() -> None:
             st.info("No quiz attempts recorded yet. Results appear here once candidates complete a quiz.")
         else:
             quiz_map = {q["id"]: q["title"] for q in st.session_state.quizzes}
+            unique_students = {att.get("email", "").lower() for att in all_attempts if att.get("email")}
+            avg_accuracy = sum(float(att.get("accuracy", 0)) for att in all_attempts) / len(all_attempts)
+            c_total, c_students, c_avg = st.columns(3)
+            c_total.metric("Total attempts", len(all_attempts))
+            c_students.metric("Students", len(unique_students))
+            c_avg.metric("Average accuracy", f"{avg_accuracy:.1f}%")
+            st.divider()
+
             by_quiz: dict[str, list] = {}
             for att in all_attempts:
                 by_quiz.setdefault(att.get("quiz_id", "unknown"), []).append(att)
-            for qid, atts in by_quiz.items():
-                title = quiz_map.get(qid, qid)
-                with st.expander(f"{title}  —  {len(atts)} attempt(s)"):
+            for qid, atts in sorted(by_quiz.items(), key=lambda item: quiz_map.get(item[0], item[0])):
+                title = quiz_map.get(qid, atts[0].get("quiz_title", qid))
+                quiz_avg = sum(float(att.get("accuracy", 0)) for att in atts) / len(atts)
+                students = {att.get("email", "").lower() for att in atts if att.get("email")}
+                with st.expander(f"{title} — {len(atts)} attempt(s) · {len(students)} student(s) · avg {quiz_avg:.1f}%"):
                     for att in sorted(atts, key=lambda x: x.get("completed_at", ""), reverse=True):
-                        c1, c2, c3, c4, c5 = st.columns([2, 1, 1, 1, 1])
-                        c1.write(f"**{att.get('candidate', '—')}** · {att.get('email', '—')}")
-                        c2.metric("Score", f"{att.get('score', 0)}/{att.get('max_score', 0)}")
-                        c3.metric("Accuracy", f"{att.get('accuracy', 0)}%")
-                        c4.metric("Correct", att.get("correct", 0))
-                        c5.write(att.get("completed_at", "")[:10])
-                        st.divider()
+                        completed_at = att.get("completed_at", "")[:19]
+                        label = (
+                            f"{att.get('candidate', 'Student')} · {att.get('email', '—')} · "
+                            f"{att.get('accuracy', 0)}% · {completed_at}"
+                        )
+                        with st.container(border=True):
+                            st.markdown(f"**{label}**")
+                            c1, c2, c3, c4 = st.columns(4)
+                            c1.metric("Score", f"{att.get('score', 0)}/{att.get('max_score', 0)}")
+                            c2.metric("Accuracy", f"{att.get('accuracy', 0)}%")
+                            c3.metric("Correct", f"{att.get('correct', 0)}/{att.get('total', 0)}")
+                            c4.metric("Incorrect", att.get("incorrect", 0))
+                            st.caption(f"Completed: {completed_at or '—'}")
+                            render_attempt_review(att, include_all=False)
 
     # ── TAB 4: FEEDBACK ───────────────────────────────────────────────────
     with tab_feedback:
@@ -3167,6 +3393,8 @@ def render_results() -> None:
             "incorrect":      len(st.session_state.incorrect),
             "total":          total,
             "subject_accuracy": subj_acc,
+            "responses":      st.session_state.responses,
+            "incorrect_items": st.session_state.incorrect,
             "completed_at":   datetime.now().isoformat(timespec="seconds"),
         }
         st.session_state["attempt_id"] = save_attempt(attempt)
@@ -3312,6 +3540,9 @@ def render_user_history() -> None:
                 c1.metric("Score", f"{att.get('score', 0)}/{att.get('max_score', 0)}")
                 c2.metric("Accuracy", f"{att.get('accuracy', 0)}%")
                 c3.metric("Correct", f"{att.get('correct', 0)}/{att.get('total', 0)}")
+                render_attempt_review(att, include_all=False)
+                if st.checkbox("Show complete answer review", key=f"full-review-{att.get('id', att.get('completed_at', title))}"):
+                    render_attempt_review(att, include_all=True)
 
     if st.button("Back to Quiz Portal", use_container_width=True):
         navigate("public_dashboard")
