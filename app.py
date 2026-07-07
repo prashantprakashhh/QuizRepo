@@ -259,9 +259,7 @@ def inject_css() -> None:
             --accent: #ff6b6b;
             --soft: rgba(220, 20, 60, 0.12);
             --danger: #ff3366;
-            --glass: rgba(255, 255, 255, 0.065);
-            --glass-strong: rgba(255, 255, 255, 0.105);
-            --glass-line: rgba(255, 255, 255, 0.16);
+
         }
 
         html, body, [class*="css"] {
@@ -270,31 +268,13 @@ def inject_css() -> None:
         }
 
         .stApp {
-            position: relative;
             background:
                 radial-gradient(circle at 18% 8%, rgba(220, 20, 60, 0.22), transparent 28rem),
                 radial-gradient(circle at 86% 18%, rgba(180, 10, 50, 0.16), transparent 25rem),
                 linear-gradient(180deg, #050003 0%, #0c0006 48%, #040002 100%);
         }
 
-        .stApp::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            background:
-                linear-gradient(115deg, transparent 0 32%, rgba(255,255,255,0.035) 43%, transparent 54% 100%),
-                linear-gradient(rgba(255,255,255,0.026) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.020) 1px, transparent 1px);
-            background-size: 220% 100%, 72px 72px, 72px 72px;
-            mask-image: radial-gradient(circle at 50% 20%, black, transparent 78%);
-            animation: glassSweep 18s ease-in-out infinite;
-        }
-
         .block-container {
-            position: relative;
-            z-index: 1;
             max-width: 1180px;
             padding-top: 1.5rem;
             padding-bottom: 4rem;
@@ -356,41 +336,19 @@ def inject_css() -> None:
             position: relative;
             overflow: hidden;
             min-height: 580px;
-            border: 1px solid var(--glass-line);
+            border: 1px solid var(--line);
             border-radius: 14px;
             background:
                 radial-gradient(circle at 76% 24%, rgba(220, 20, 60, 0.22), transparent 17rem),
                 radial-gradient(circle at 88% 72%, rgba(180, 10, 50, 0.16), transparent 18rem),
-                linear-gradient(135deg, rgba(255,255,255,0.075), rgba(5, 0, 3, 0.84));
-            backdrop-filter: blur(18px) saturate(1.25);
-            -webkit-backdrop-filter: blur(18px) saturate(1.25);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 30px 80px rgba(0,0,0,0.35);
+                linear-gradient(135deg, rgba(15, 1, 8, 0.96), rgba(5, 0, 3, 0.92));
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 30px 80px rgba(0,0,0,0.35);
             padding: 3.2rem 2.25rem 2rem;
-        }
-
-        .dashboard-shell::before,
-        .user-hero::before,
-        .portal-hero::before,
-        .card::before,
-        .vignette-card::before,
-        .result-card::before,
-        .quiz-card::before,
-        .insight-card::before,
-        .feedback-panel::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            border-radius: inherit;
-            background: linear-gradient(115deg, transparent 0 28%, rgba(255,255,255,0.105) 45%, transparent 62% 100%);
-            transform: translateX(-120%);
-            opacity: 0;
-            animation: panelSheen 9s ease-in-out infinite;
         }
 
         .dashboard-panel {
             position: relative;
-            z-index: 2;
+            z-index: 1;
             width: min(680px, 62%);
             padding: 1rem 0 1.6rem;
         }
@@ -434,12 +392,10 @@ def inject_css() -> None:
         }
 
         .landing-metric {
-            background: var(--glass);
-            border: 1px solid var(--glass-line);
+            background: rgba(255,255,255,0.055);
+            border: 1px solid var(--line);
             border-radius: 8px;
             padding: 0.75rem;
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
         }
 
         .landing-metric strong {
@@ -563,13 +519,10 @@ def inject_css() -> None:
         }
 
         .feature-tile {
-            background: var(--glass);
-            border: 1px solid var(--glass-line);
+            background: rgba(17, 24, 39, 0.86);
+            border: 1px solid var(--line);
             border-radius: 10px;
             padding: 1rem;
-            backdrop-filter: blur(14px) saturate(1.2);
-            -webkit-backdrop-filter: blur(14px) saturate(1.2);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 12px 32px rgba(0,0,0,0.18);
         }
 
         .feature-tile h3 {
@@ -604,29 +557,25 @@ def inject_css() -> None:
             color: rgba(248,240,240,0.58);
             font-size: 0.78rem;
             text-decoration: none;
-            border: 1px solid var(--glass-line);
+            border: 1px solid rgba(220,20,60,0.22);
             padding: 0.34rem 0.8rem;
             border-radius: 6px;
-            background: var(--glass);
+            background: rgba(255,255,255,0.035);
             letter-spacing: 0.04em;
             white-space: nowrap;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
         }
 
         .user-hero {
             position: relative;
             overflow: hidden;
-            border: 1px solid var(--glass-line);
+            border: 1px solid rgba(220,20,60,0.22);
             border-radius: 12px;
             padding: 2rem;
             margin-bottom: 1rem;
             background:
-                linear-gradient(115deg, rgba(255,255,255,0.085), rgba(6,0,4,0.86) 54%, rgba(76,7,23,0.58)),
+                linear-gradient(115deg, rgba(20,2,10,0.96), rgba(6,0,4,0.94) 54%, rgba(76,7,23,0.62)),
                 radial-gradient(circle at 84% 18%, rgba(255,107,107,0.18), transparent 18rem);
-            backdrop-filter: blur(20px) saturate(1.28);
-            -webkit-backdrop-filter: blur(20px) saturate(1.28);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.13), 0 28px 70px rgba(0,0,0,0.30);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.055), 0 28px 70px rgba(0,0,0,0.30);
         }
 
         .user-hero::after {
@@ -676,16 +625,11 @@ def inject_css() -> None:
         }
 
         .insight-card {
-            position: relative;
-            overflow: hidden;
-            background: linear-gradient(180deg, var(--glass-strong), rgba(255,255,255,0.035));
-            border: 1px solid var(--glass-line);
+            background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.025));
+            border: 1px solid rgba(220,20,60,0.18);
             border-radius: 10px;
             padding: 1rem;
             min-height: 100%;
-            backdrop-filter: blur(16px) saturate(1.25);
-            -webkit-backdrop-filter: blur(16px) saturate(1.25);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 16px 40px rgba(0,0,0,0.20);
         }
 
         .insight-card strong {
@@ -733,15 +677,10 @@ def inject_css() -> None:
             align-items: end;
             gap: 1rem;
             padding: 1.35rem 1.4rem;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid var(--glass-line);
+            border: 1px solid rgba(220,20,60,0.18);
             border-radius: 10px;
-            background: linear-gradient(135deg, var(--glass-strong), rgba(6,0,4,0.84));
+            background: linear-gradient(135deg, rgba(20,2,10,0.92), rgba(6,0,4,0.88));
             margin-bottom: 1rem;
-            backdrop-filter: blur(18px) saturate(1.25);
-            -webkit-backdrop-filter: blur(18px) saturate(1.25);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 20px 52px rgba(0,0,0,0.25);
         }
 
         .portal-hero h1 {
@@ -775,35 +714,17 @@ def inject_css() -> None:
             gap: 0.9rem;
             margin-bottom: 0.7rem;
             padding: 0.7rem 0.9rem;
-            border: 1px solid var(--glass-line);
+            border: 1px solid rgba(220,20,60,0.20);
             border-radius: 9px;
-            background: var(--glass);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+            background: rgba(255,255,255,0.04);
         }
 
         .feedback-panel {
-            position: relative;
-            overflow: hidden;
-            border: 1px solid var(--glass-line);
+            border: 1px solid rgba(220,20,60,0.22);
             border-radius: 10px;
             padding: 1rem;
             margin: 1rem 0;
-            background: linear-gradient(180deg, var(--glass-strong), rgba(255,255,255,0.035));
-            backdrop-filter: blur(16px) saturate(1.25);
-            -webkit-backdrop-filter: blur(16px) saturate(1.25);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 16px 40px rgba(0,0,0,0.20);
-        }
-
-        @keyframes glassSweep {
-            0%, 100% { background-position: 180% 0, 0 0, 0 0; opacity: 0.76; }
-            50% { background-position: 20% 0, 34px 22px, -26px 16px; opacity: 1; }
-        }
-
-        @keyframes panelSheen {
-            0%, 72% { transform: translateX(-120%); opacity: 0; }
-            82% { opacity: 0.65; }
-            100% { transform: translateX(120%); opacity: 0; }
+            background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
         }
 
         @keyframes floatDrift {
@@ -832,14 +753,10 @@ def inject_css() -> None:
         }
 
         .card, .vignette-card, .result-card, .quiz-card {
-            position: relative;
-            overflow: hidden;
-            background: linear-gradient(180deg, var(--glass-strong), rgba(15,1,8,0.72));
-            border: 1px solid var(--glass-line);
+            background: var(--surface);
+            border: 1px solid var(--line);
             border-radius: 8px;
-            backdrop-filter: blur(15px) saturate(1.2);
-            -webkit-backdrop-filter: blur(15px) saturate(1.2);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 12px 30px rgba(0,0,0,0.20);
+            box-shadow: 0 12px 30px rgba(55, 45, 31, 0.08);
             padding: 1.15rem 1.25rem;
             margin: 0.7rem 0;
         }
@@ -1026,13 +943,143 @@ def inject_css() -> None:
         }
 
         div[data-testid="stMetric"] {
-            background: var(--glass);
-            border: 1px solid var(--glass-line);
+            background: var(--surface);
+            border: 1px solid var(--line);
             border-radius: 8px;
             padding: 1rem;
-            backdrop-filter: blur(14px) saturate(1.2);
-            -webkit-backdrop-filter: blur(14px) saturate(1.2);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 8px 24px rgba(0,0,0,0.18);
+            box-shadow: 0 8px 24px rgba(55, 45, 31, 0.07);
+        }
+
+        /* ── Safe glass animations: box-shadow glow, gradient shifts, text shimmer ── */
+
+        @keyframes borderGlow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(220,20,60,0), 0 12px 30px rgba(0,0,0,0.08); }
+            50% { box-shadow: 0 0 0 2px rgba(220,20,60,0.18), 0 18px 45px rgba(220,20,60,0.08); }
+        }
+
+        @keyframes heroGlow {
+            0%, 100% { box-shadow: inset 0 1px 0 rgba(255,255,255,0.055), 0 28px 70px rgba(0,0,0,0.30), 0 0 60px rgba(220,20,60,0.04); }
+            50% { box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 28px 70px rgba(0,0,0,0.35), 0 0 100px rgba(220,20,60,0.12); }
+        }
+
+        @keyframes shimmerText {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        @keyframes fillGrow {
+            from { width: 0%; }
+        }
+
+        @keyframes orbitPulse {
+            0%, 100% { opacity: 0.55; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(1.06); }
+        }
+
+        @keyframes metricPop {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Hero: pulsing glow — safe on the element itself */
+        .user-hero {
+            animation: heroGlow 6s ease-in-out infinite;
+        }
+
+        /* Landing shell: subtle border glow cycle */
+        .dashboard-shell {
+            animation: borderGlow 8s ease-in-out infinite;
+        }
+
+        /* All cards: hover lift + glow */
+        .card, .vignette-card, .result-card, .quiz-card, .insight-card, .feedback-panel {
+            transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+        }
+        .card:hover, .vignette-card:hover, .result-card:hover,
+        .quiz-card:hover, .insight-card:hover, .feedback-panel:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 22px 55px rgba(0,0,0,0.22), 0 0 0 1px rgba(220,20,60,0.28);
+            border-color: rgba(220,20,60,0.35);
+        }
+
+        /* Vignette card: animated left-border shimmer */
+        .vignette-card {
+            border-left: 4px solid var(--primary);
+            background: linear-gradient(
+                to right,
+                rgba(220,20,60,0.06) 0%,
+                rgba(15,1,8,0.96) 6%
+            );
+        }
+
+        /* Shimmer heading on hero */
+        .user-hero h1, .dashboard-panel h1 {
+            background: linear-gradient(
+                90deg,
+                #f8f0f0 0%, #f8f0f0 30%,
+                rgba(220,20,60,0.9) 50%,
+                #f8f0f0 70%, #f8f0f0 100%
+            );
+            background-size: 200% auto;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmerText 5s linear infinite;
+        }
+
+        /* Progress fill: animate width in */
+        .progress-fill {
+            animation: fillGrow 0.8s ease-out both;
+        }
+
+        /* Metric card: pop-in */
+        div[data-testid="stMetric"] {
+            animation: metricPop 0.4s ease-out both;
+        }
+
+        /* Orbit: pulsing opacity on landing shell */
+        .med-orbit {
+            animation: slowSpin 28s linear infinite, orbitPulse 6s ease-in-out infinite;
+        }
+
+        /* Pills: subtle glow on hover */
+        .pill:hover {
+            background: rgba(220,20,60,0.22);
+            box-shadow: 0 0 12px rgba(220,20,60,0.22);
+            cursor: default;
+        }
+
+        /* Nav link: hover glow */
+        .app-nav-link:hover {
+            border-color: rgba(220,20,60,0.45);
+            background: rgba(220,20,60,0.08);
+            color: rgba(248,240,240,0.85);
+            box-shadow: 0 0 20px rgba(220,20,60,0.12);
+        }
+
+        /* Feature tiles: hover border glow */
+        .feature-tile {
+            transition: border-color 180ms ease, box-shadow 180ms ease;
+        }
+        .feature-tile:hover {
+            border-color: rgba(220,20,60,0.35);
+            box-shadow: 0 0 30px rgba(220,20,60,0.08);
+        }
+
+        /* CTA sign-in button: pulsing glow */
+        @keyframes ctaGlow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(220,20,60,0); }
+            50% { box-shadow: 0 0 20px 4px rgba(220,20,60,0.22); }
+        }
+        a.cta-signin-link {
+            animation: ctaGlow 3s ease-in-out infinite;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .user-hero, .dashboard-shell, .med-orbit,
+            div[data-testid="stMetric"], .progress-fill,
+            .user-hero h1, .dashboard-panel h1,
+            a.cta-signin-link { animation: none !important; -webkit-text-fill-color: var(--ink) !important; }
         }
 
         section[data-testid="stSidebar"] { display: none; }
