@@ -1,4 +1,4 @@
-# NEET PG Clinical Vignette Dashboard
+# Quiz Repo for NEET PG, live - https://quizrepo-05dh.onrender.com
 
 A role-based Streamlit dashboard for NEET PG preparation with admin quiz generation, draft/publish workflow, public quiz links, mandatory candidate registration, +4/-1 scoring, and mnemonic feedback for incorrect answers.
 
